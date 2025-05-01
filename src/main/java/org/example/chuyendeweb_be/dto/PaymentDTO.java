@@ -1,13 +1,13 @@
 package org.example.chuyendeweb_be.dto;
 
-import lombok.Value;
+import lombok.*;
 
 import java.io.Serializable;
 
-/**
- * DTO for {@link org.example.chuyendeweb_be.entity.Payment}
- */
-@Value
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PaymentDTO implements Serializable {
     Long id;
     String mehthodName;

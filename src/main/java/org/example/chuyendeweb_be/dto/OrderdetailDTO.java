@@ -1,14 +1,14 @@
 package org.example.chuyendeweb_be.dto;
 
-import lombok.Value;
+import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-/**
- * DTO for {@link org.example.chuyendeweb_be.entity.Orderdetail}
- */
-@Value
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderdetailDTO implements Serializable {
     Long id;
     BigDecimal productPrice;

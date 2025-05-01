@@ -1,14 +1,14 @@
 package org.example.chuyendeweb_be.dto;
 
-import lombok.Value;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.Instant;
 
-/**
- * DTO for {@link org.example.chuyendeweb_be.entity.Review}
- */
-@Value
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReviewDTO implements Serializable {
     Long id;
     String commenterName;

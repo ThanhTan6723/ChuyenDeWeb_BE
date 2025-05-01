@@ -1,15 +1,13 @@
 package org.example.chuyendeweb_be.dto;
 
-import lombok.Value;
-import org.example.chuyendeweb_be.entity.ProductDto;
-
+import lombok.*;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * DTO for {@link org.example.chuyendeweb_be.entity.Batch}
- */
-@Value
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BatchDTO implements Serializable {
     Long id;
     String name;
@@ -20,5 +18,5 @@ public class BatchDTO implements Serializable {
     int currentQuantity;
     double priceImport;
     BrandDTO provider;
-    ProductDto product;
+    ProductDTO product;
 }
