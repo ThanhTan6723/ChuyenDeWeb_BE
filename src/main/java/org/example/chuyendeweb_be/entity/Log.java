@@ -15,7 +15,7 @@ public class Log {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "log_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "times_tamp")

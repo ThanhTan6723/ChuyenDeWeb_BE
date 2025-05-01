@@ -14,7 +14,7 @@ import lombok.Setter;
 public class Discounttype {
     @Id
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "type", length = 15)
     private String type;
