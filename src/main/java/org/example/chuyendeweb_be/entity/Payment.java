@@ -14,7 +14,7 @@ import lombok.Setter;
 public class Payment {
     @Id
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "mehthodName", length = 50)
     private String mehthodName;
