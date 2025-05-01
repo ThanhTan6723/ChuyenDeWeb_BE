@@ -1,14 +1,14 @@
 package org.example.chuyendeweb_be.dto;
 
-import lombok.Value;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.Instant;
 
-/**
- * DTO for {@link org.example.chuyendeweb_be.entity.User}
- */
-@Value
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDTO implements Serializable {
     Long id;
     RoleDTO role;

@@ -1,14 +1,14 @@
 package org.example.chuyendeweb_be.dto;
 
-import lombok.Value;
+import lombok.*;
 import org.example.chuyendeweb_be.entity.Category;
 
 import java.io.Serializable;
 
-/**
- * DTO for {@link org.example.chuyendeweb_be.entity.Product}
- */
-@Value
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductDTO implements Serializable {
     Long id;
     String name;

@@ -1,15 +1,15 @@
 package org.example.chuyendeweb_be.dto;
 
-import lombok.Value;
+import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-/**
- * DTO for {@link org.example.chuyendeweb_be.entity.Order}
- */
-@Value
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderDTO implements Serializable {
     Long id;
     Instant bookingDate;

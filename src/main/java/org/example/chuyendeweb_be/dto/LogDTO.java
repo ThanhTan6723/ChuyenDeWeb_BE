@@ -1,14 +1,14 @@
 package org.example.chuyendeweb_be.dto;
 
-import lombok.Value;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.Instant;
 
-/**
- * DTO for {@link org.example.chuyendeweb_be.entity.Log}
- */
-@Value
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class LogDTO implements Serializable {
     Long id;
     Instant timesTamp;
