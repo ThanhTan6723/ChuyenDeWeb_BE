@@ -10,38 +10,38 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+//    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 32)
-    private String name;
+//    @Column(name = "name", nullable = false, length = 32)
+    private String username;
 
-    @Column(name = "password", nullable = false, length = 50)
+//    @Column(name = "password", nullable = false, length = 50)
     private String password;
 
-    @Column(name = "email")
+//    @Column(name = "email")
     private String email;
 
-    @Column(name = "phonenumber", length = 15)
-    private String phonenumber;
+//    @Column(name = "phonenumber", length = 15)
+    private String phone;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
     @ColumnDefault("0")
-    @Column(name = "failed")
+//    @Column(name = "failed")
     private Integer failed;
 
     @ColumnDefault("0")
-    @Column(name = "locked")
+//    @Column(name = "locked")
     private Boolean locked;
 
-    @Column(name = "lock_time")
+//    @Column(name = "lock_time")
     private Instant lockTime;
 
 }
