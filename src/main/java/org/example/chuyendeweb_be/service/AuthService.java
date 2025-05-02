@@ -30,7 +30,7 @@ public class AuthService {
         if (userRepository.findByUsername(request.getUsername()).isPresent())
             throw new RuntimeException("Username already exists");
 
-        Role userRole = roleRepository.findByName("ROLE_USER")
+        Role userRole = roleRepository.findByRoleName("ROLE_USER")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
 
         User user = userMapper.toEntity(request);
@@ -55,7 +55,7 @@ public class AuthService {
 
     private UserDetails loadUserDetails(User user) {
         return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getName())
+                .username(user.getUsername())
                 .password(user.getPassword())
                 .authorities(new SimpleGrantedAuthority(user.getRole().getRoleName()))
                 .build();
