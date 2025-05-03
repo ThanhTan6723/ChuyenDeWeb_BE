@@ -30,7 +30,7 @@ public class AuthService {
         if (userRepository.findByUsername(request.getUsername()).isPresent())
             throw new RuntimeException("Username already exists");
 
-        Role userRole = roleRepository.findByRoleName("ROLE_USER")
+        Role userRole = roleRepository.findByRoleName("ROLE_CLIENT")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
 
         User user = userMapper.toEntity(request);
@@ -43,8 +43,8 @@ public class AuthService {
     }
 
     public AuthResponseDTO login(LoginRequestDTO request) {
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User user = userRepository.findByEmailOrPhone(request.getEmail(), request.getPhone())
+                .orElseThrow(() -> new UsernameNotFoundException("Email or phone not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
             throw new BadCredentialsException("Invalid password");

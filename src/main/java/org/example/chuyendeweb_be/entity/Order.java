@@ -10,11 +10,10 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "booking_date")
@@ -24,8 +23,8 @@ public class Order {
     private Instant deliveryDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private User account;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "consignee_name", length = 30)
     private String consigneeName;

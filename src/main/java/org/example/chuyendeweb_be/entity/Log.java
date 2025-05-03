@@ -3,23 +3,24 @@ package org.example.chuyendeweb_be.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "log")
 public class Log {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "log_id", nullable = false)
     private Long id;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "times_tamp")
-    private Instant timesTamp;
+    @Column(name = "timestamp", updatable = false)
+    @CreationTimestamp
+    private Instant timestamp;
 
     @Column(name = "log_level", length = 30)
     private String logLevel;
@@ -47,15 +48,14 @@ public class Log {
     private String affectedTable;
 
     @Lob
-    @Column(name = "beforeData")
+    @Column(name = "before_data")
     private String beforeData;
 
     @Lob
-    @Column(name = "afterData")
+    @Column(name = "after_data")
     private String afterData;
 
     @Lob
-    @Column(name = "national")
-    private String national;
-
+    @Column(name = "nationality")
+    private String nationality;
 }
