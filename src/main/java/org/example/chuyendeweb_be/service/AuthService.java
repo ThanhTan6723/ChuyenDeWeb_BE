@@ -43,8 +43,8 @@ public class AuthService {
     }
 
     public AuthResponseDTO login(LoginRequestDTO request) {
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User user = userRepository.findByEmailOrPhone(request.getEmail(), request.getPhone())
+                .orElseThrow(() -> new UsernameNotFoundException("Email or phone not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
             throw new BadCredentialsException("Invalid password");
