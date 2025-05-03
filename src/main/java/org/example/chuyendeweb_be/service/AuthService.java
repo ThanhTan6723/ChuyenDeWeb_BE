@@ -30,7 +30,7 @@ public class AuthService {
         if (userRepository.findByUsername(request.getUsername()).isPresent())
             throw new RuntimeException("Username already exists");
 
-        Role userRole = roleRepository.findByRoleName("ROLE_USER")
+        Role userRole = roleRepository.findByRoleName("ROLE_CLIENT")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
 
         User user = userMapper.toEntity(request);
