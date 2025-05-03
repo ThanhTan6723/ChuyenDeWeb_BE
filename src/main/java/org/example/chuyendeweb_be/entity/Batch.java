@@ -34,7 +34,7 @@ public class Batch {
 
     @ManyToOne
     @JoinColumn(name = "brand_id")
-    private Brand provider;
+    private Brand brand;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
