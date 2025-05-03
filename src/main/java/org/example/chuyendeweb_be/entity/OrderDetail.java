@@ -9,12 +9,16 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
-@Table(name = "orderdetail")
-public class Orderdetail {
+@Table(name = "orderdetails")
+public class OrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     @Column(name = "product_price", precision = 10, scale = 3)
     private BigDecimal productPrice;
