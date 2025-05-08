@@ -13,6 +13,7 @@ import org.example.chuyendeweb_be.security.JwtService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
+
 
     public AuthResponseDTO register(RegisterRequestDTO request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent())
@@ -38,8 +41,11 @@ public class AuthService {
         user.setRole(userRole);
         userRepository.save(user);
 
-        UserDetails userDetails = loadUserDetails(user);
-        return new AuthResponseDTO(jwtService.generateToken(userDetails), jwtService.generateRefreshToken(userDetails));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+        return new AuthResponseDTO(
+                jwtService.generateToken(userDetails),
+                jwtService.generateRefreshToken(userDetails)
+        );
     }
 
     public AuthResponseDTO login(LoginRequestDTO request) {
