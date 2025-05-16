@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-// util/TokenBlacklist.java
 @Component
 public class TokenBlacklist {
     private final Set<String> blacklist = ConcurrentHashMap.newKeySet();
