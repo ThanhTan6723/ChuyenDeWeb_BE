@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/oauth2/**", "/login/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oAuth2LoginSuccessHandler)) // thêm dòng này
