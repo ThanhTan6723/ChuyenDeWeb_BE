@@ -17,8 +17,4 @@ public class Brand {
     @Column(name = "name", length = 100)
     private String name;
 
-    @Lob
-    @Column(name = "address")
-    private String address;
-
 }

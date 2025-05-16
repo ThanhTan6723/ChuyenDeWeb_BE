@@ -1,9 +1,12 @@
 package org.example.chuyendeweb_be.service;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.chuyendeweb_be.dto.AuthResponseDTO;
 import org.example.chuyendeweb_be.dto.LoginRequestDTO;
 import org.example.chuyendeweb_be.dto.RegisterRequestDTO;
+import org.example.chuyendeweb_be.dto.UserDTO;
 import org.example.chuyendeweb_be.entity.Role;
 import org.example.chuyendeweb_be.entity.User;
 import org.example.chuyendeweb_be.mapper.UserMapper;
@@ -28,7 +31,6 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
-
     public AuthResponseDTO register(RegisterRequestDTO request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent())
             throw new RuntimeException("Username already exists");
@@ -49,6 +51,7 @@ public class AuthService {
     }
 
     public AuthResponseDTO login(LoginRequestDTO request) {
+        System.out.println("Login with email: " + request.getEmail() + ", phone: " + request.getPhone());
         User user = userRepository.findByEmailOrPhone(request.getEmail(), request.getPhone())
                 .orElseThrow(() -> new UsernameNotFoundException("Email or phone not found"));
 
@@ -56,7 +59,32 @@ public class AuthService {
             throw new BadCredentialsException("Invalid password");
 
         UserDetails userDetails = loadUserDetails(user);
-        return new AuthResponseDTO(jwtService.generateToken(userDetails), jwtService.generateRefreshToken(userDetails));
+        return new AuthResponseDTO(
+                jwtService.generateToken(userDetails),
+                jwtService.generateRefreshToken(userDetails)
+        );
+    }
+
+    public AuthResponseDTO refreshToken(String refreshToken) {
+        // Xác thực refresh token
+        String username = jwtService.extractUsername(refreshToken);
+        if (username == null) {
+            throw new BadCredentialsException("Invalid refresh token");
+        }
+
+        // Tải thông tin người dùng
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        // Kiểm tra xem refresh token có hợp lệ không
+        if (!jwtService.isTokenValid(refreshToken, userDetails)) {
+            throw new BadCredentialsException("Refresh token expired or invalid");
+        }
+
+        // Tạo mới access token và refresh token
+        return new AuthResponseDTO(
+                jwtService.generateToken(userDetails),
+                jwtService.generateRefreshToken(userDetails)
+        );
     }
 
     private UserDetails loadUserDetails(User user) {
@@ -66,5 +94,5 @@ public class AuthService {
                 .authorities(new SimpleGrantedAuthority(user.getRole().getRoleName()))
                 .build();
     }
-}
 
+}

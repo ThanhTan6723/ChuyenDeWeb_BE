@@ -20,11 +20,9 @@ public class Product {
     @Column(name = "price", nullable = false)
     private Double price;
 
-    @Column(name = "weight", nullable = false)
-    private Double weight;
-
-    @Column(name = "image")
-    private String image;
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
 
     @Lob
     @Column(name = "description")
