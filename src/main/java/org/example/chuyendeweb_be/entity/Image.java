@@ -15,7 +15,7 @@ public class Image {
     private Long id;
 
     @Lob
-    @Column(name = "imgAssetId")
-    private String imgAssetId;
+    @Column(name = "imgAsset")
+    private String imgAsset;
 
 }
