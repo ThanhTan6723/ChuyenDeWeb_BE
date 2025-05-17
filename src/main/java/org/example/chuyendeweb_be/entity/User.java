@@ -42,4 +42,39 @@ public class User {
     @Column(name = "lock_time")
     private Instant lockTime;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public void setFailed(Integer failed) {
+        this.failed = failed;
+    }
+
+    public void setLocked(Boolean locked) {
+        this.locked = locked;
+    }
+
+    public void setLockTime(Instant lockTime) {
+        this.lockTime = lockTime;
+    }
 }
