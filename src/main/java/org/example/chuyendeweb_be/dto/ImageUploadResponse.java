@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthResponseDTO {
-    private String accessToken;
-    private String refreshToken;
+public class ImageUploadResponse {
+    private String imageUrl;
+    private String message;
 }
