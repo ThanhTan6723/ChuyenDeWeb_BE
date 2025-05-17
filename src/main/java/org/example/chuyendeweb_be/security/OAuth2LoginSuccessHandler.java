@@ -4,7 +4,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.example.chuyendeweb_be.entity.Role;
+import org.example.chuyendeweb_be.entity.User;
+import org.example.chuyendeweb_be.repository.RoleRepository;
+import org.example.chuyendeweb_be.repository.UserRepository;
 import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -20,6 +25,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -27,10 +34,28 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
         String email = oAuth2User.getAttribute("email"); // google/facebook trả về email
+        // Kiểm tra user có tồn tại chưa
+        User user = userRepository.findByEmail(email).orElseGet(() -> {
+            // Nếu chưa thì tạo mới user
+            User newUser = new User();
+            newUser.setUsername(email); // hoặc tạo username riêng nếu muốn
+            newUser.setEmail(email);
+            newUser.setPassword(""); // OAuth không cần password
+            newUser.setLocked(false);
+            newUser.setFailed(0);
+
+            Role defaultRole = roleRepository.findByRoleName("ROLE_CLIENT")
+                    .orElseThrow(() -> new RuntimeException("Default role not found"));
+            newUser.setRole(defaultRole);
+
+            return userRepository.save(newUser);
+        });
         UserDetails userDetails = userDetailsService.loadUserByUsername(email); // <-- dùng service để lấy thông tin
         String token = jwtService.generateToken(userDetails); // <-- tạo token từ UserDetails
 
-        String redirectUrl = "http://localhost:3000/oauth2/redirect?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+//        String redirectUrl = "http://localhost:3000/oauth2/redirect?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+//        getRedirectStrategy().sendRedirect(request, response, redirectUrl);
+        String redirectUrl = "http://localhost:3000/home?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }
