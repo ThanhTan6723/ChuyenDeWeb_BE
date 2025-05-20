@@ -32,15 +32,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-//                .requiresChannel(channel -> channel
-//                        .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure()
-//                )
-//                .csrf(csrf -> csrf.disable())
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .authorizeHttpRequests(authz -> authz
-//                        .requestMatchers("/api/auth/**", "/oauth2/**", "/login/**").permitAll()
-//                        .anyRequest().authenticated())
-//               .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
                 .requiresChannel(channel -> channel
                         .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure()
                 )
@@ -59,7 +50,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "https://localhost:8443"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "https://localhost:3000", "https://localhost:8443"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
