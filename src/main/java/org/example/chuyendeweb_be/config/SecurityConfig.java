@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Connector;
 import org.example.chuyendeweb_be.security.JwtAuthenticationFilter;
 //import org.example.chuyendeweb_be.security.OAuth2LoginSuccessHandler;
+import org.example.chuyendeweb_be.security.OAuth2LoginSuccessHandler;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
@@ -26,19 +27,30 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-//    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
+//                .requiresChannel(channel -> channel
+//                        .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure()
+//                )
+//                .csrf(csrf -> csrf.disable())
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//                .authorizeHttpRequests(authz -> authz
+//                        .requestMatchers("/api/auth/**", "/oauth2/**", "/login/**").permitAll()
+//                        .anyRequest().authenticated())
+//               .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
+                .requiresChannel(channel -> channel
+                        .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure()
+                )
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh-token", "/oauth2/**", "/api/auth/logout",("/api/images/**")).permitAll()
+                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh-token", "/oauth2/**", "/api/auth/logout","/login/**",("/api/images/**")).permitAll()
                         .anyRequest().authenticated()
                 )
-//                .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
+                .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
