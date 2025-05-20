@@ -1,12 +1,9 @@
 package org.example.chuyendeweb_be.service;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.chuyendeweb_be.dto.AuthResponseDTO;
 import org.example.chuyendeweb_be.dto.LoginRequestDTO;
 import org.example.chuyendeweb_be.dto.RegisterRequestDTO;
-import org.example.chuyendeweb_be.dto.UserDTO;
 import org.example.chuyendeweb_be.entity.Role;
 import org.example.chuyendeweb_be.entity.User;
 import org.example.chuyendeweb_be.mapper.UserMapper;

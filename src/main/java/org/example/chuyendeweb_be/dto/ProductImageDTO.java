@@ -9,6 +9,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductImageDTO implements Serializable {
-    Long id;
-    ImageDTO image;
+    private Long id;
+    private ProductVariantDTO product;
+    private boolean isMainImage;
+    private ImageDTO image;
 }
