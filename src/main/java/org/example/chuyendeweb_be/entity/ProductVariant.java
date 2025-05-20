@@ -16,6 +16,7 @@ public class ProductVariant {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Column(name = "product_attribute")
     private String productAttribute;
 
     @Column(name = "variant", length = 100)

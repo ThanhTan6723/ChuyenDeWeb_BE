@@ -32,7 +32,7 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(name = "viewCount")
+    @Column(name = "view_count")
     private Integer viewCount;
 
 }

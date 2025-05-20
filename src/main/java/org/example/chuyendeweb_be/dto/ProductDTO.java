@@ -10,12 +10,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDTO implements Serializable {
-    Long id;
-    String name;
-    Double price;
-    Double weight;
-    String image;
-    String description;
-    CategoryDTO category;
-    Integer viewCount;
+    private Long id;
+    private String name;
+    private Double price;
+    private String description;
+    private Long brandId;
+    private Long categoryId;
+    private Integer viewCount;
 }

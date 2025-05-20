@@ -20,7 +20,7 @@ public class ProductImage {
     private boolean isMain;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "imageId")
+    @JoinColumn(name = "image_id")
     private Image image;
 
 }
