@@ -1,6 +1,7 @@
 package org.example.chuyendeweb_be.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -9,6 +10,7 @@ import java.time.Instant;
 
 @Getter
 @Setter
+@Data
 @Entity
 @Table(name = "user")
 public class User {

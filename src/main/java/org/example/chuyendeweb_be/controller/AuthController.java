@@ -98,7 +98,6 @@ public class AuthController {
         }
     }
 
-
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         // Tạo cookie trống để xóa token
@@ -117,7 +116,7 @@ public class AuthController {
         // Tạo cookie access token
         ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", authResponse.getAccessToken())
                 .httpOnly(true)       // Chặn JavaScript truy cập (chống XSS)
-                .secure(true)         // Chỉ gửi qua HTTPS
+                .secure(false)         // Chỉ gửi qua HTTPS
                 .sameSite("Strict")   // Chống CSRF
                 .path("/")
                 .maxAge(15 * 60)      // 15 phút (khớp với thời gian hết hạn của token)
@@ -126,7 +125,7 @@ public class AuthController {
         // Tạo cookie refresh token
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", authResponse.getRefreshToken())
                 .httpOnly(true)       // Chặn JavaScript truy cập (chống XSS)
-                .secure(true)         // Chỉ gửi qua HTTPS
+                .secure(false)         // Chỉ gửi qua HTTPS
                 .sameSite("Strict")   // Chống CSRF
                 .path("/api/auth/refresh-token") // Chỉ gửi tới endpoint refresh token
                 .maxAge(24 * 60 * 60) // 1 ngày
