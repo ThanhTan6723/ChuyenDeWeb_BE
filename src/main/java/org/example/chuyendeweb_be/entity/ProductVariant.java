@@ -16,11 +16,11 @@ public class ProductVariant {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    private String productAttribute;
+
     @Column(name = "variant", length = 100)
     private String variant;
 
     private double price;
     private int quantity;
-
-
 }
