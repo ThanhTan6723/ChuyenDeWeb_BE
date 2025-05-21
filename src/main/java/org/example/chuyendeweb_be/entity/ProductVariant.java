@@ -3,6 +3,8 @@ package org.example.chuyendeweb_be.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "productvariant")
@@ -24,4 +26,7 @@ public class ProductVariant {
 
     private double price;
     private int quantity;
+
+    @OneToMany(mappedBy = "productVariant")
+    private List<ProductImage> productImageList;
 }

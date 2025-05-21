@@ -4,17 +4,18 @@ import lombok.*;
 import org.example.chuyendeweb_be.entity.Category;
 
 import java.io.Serializable;
+import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-public class ProductDTO implements Serializable {
+@NoArgsConstructor
+public class ProductDTO {
     private Long id;
     private String name;
     private Double price;
     private String description;
-    private Long brandId;
-    private Long categoryId;
-    private Integer viewCount;
+    private String brandName;
+    private String categoryName;
+    private String mainImage;
+    private List<ProductVariantDTO> variants;
 }
