@@ -33,14 +33,10 @@
 //    private double priceImport;
 //
 //    @ManyToOne
-//    @JoinColumn(name = "brand_id")
-//    private Brand brand;
-//
-//    @ManyToOne
 //    @JoinColumn(name = "user_id")
 //    private User adminCreate;
 //
 //    @ManyToOne
-//    @JoinColumn(name = "product_id")
-//    private Product product;
+//    @JoinColumn(name = "product_variant_id")
+//    private ProductVariant productVariant;
 //}
