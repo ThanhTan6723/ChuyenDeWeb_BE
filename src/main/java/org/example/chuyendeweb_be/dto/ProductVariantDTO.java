@@ -1,20 +1,17 @@
 package org.example.chuyendeweb_be.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
+import java.util.List;
+
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProductVariantDTO {
     private Long id;
-    private ProductDTO product;
-    private String productAttribute;
+    private String attribute;
     private String variant;
-    private double price;
-    private int quantity;
-
+    private Double price;
+    private Integer quantity;
+    private List<String> images;
 }
