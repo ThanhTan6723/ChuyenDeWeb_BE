@@ -1,11 +1,12 @@
 package org.example.chuyendeweb_be.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@Data
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "productimage")
 public class ProductImage {
@@ -17,7 +18,7 @@ public class ProductImage {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_variant_id", nullable = false)
     private ProductVariant productVariant;
-    private boolean isMain;
+    private boolean mainImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
