@@ -1,3 +1,4 @@
+-- Insert vào bảng role
 INSERT INTO role (id, role_name)
 VALUES (1, 'ROLE_CLIENT');
 INSERT INTO role (id, role_name)
@@ -7,11 +8,18 @@ VALUES (3, 'ROLE_MANAGE_USER');
 INSERT INTO role (id, role_name)
 VALUES (4, 'ROLE_MANAGE_ORDER');
 
-/*
- Insert into table user
- */
-INSERT INTO user(username, password, email, phone, role_id)
-VALUES ('ThanhTan', '6723', 'thanhtan8900@gmail.com', '0865603890', 1);
+-- Insert vào bảng category
+INSERT
+INTO category (id, name)
+VALUES (1, 'Tẩy trang'),
+       (2, 'Toner'),
+       (3, 'Sửa rữa mặt'),
+       (4, 'Kem chống nắng'),
+       (5, 'Bông tẩy trang'),
+       (6, 'Kem dưỡng'),
+       (7, 'Mặt nạ'),
+       (8, 'Serum'),
+       (9, 'Kem nền');
 
 -- Insert vào bảng brand
 INSERT INTO brand (id, name)
@@ -35,53 +43,56 @@ VALUES (1, 'KOKIMI'),
        (18, 'Good Skin'),
        (19, 'COLORKEY');
 
--- Insert vào bảng category
-INSERT INTO productvariant (id, product_id, product_attribute, variant, price, quantity)
-VALUES
-    (1, 1, 'Tươi mát', '400ml', 171.000, 300), -- Tẩy trang Loreal
-    (2, 1, 'Làm sạch sâu', '400ml', 200.000, 400), -- Tẩy trang Loreal
-    (3, 2, 'Dành cho da nhạy cảm', '500ml', 335.000, 500), -- Tẩy trang Bioderma
-    (4, 2, 'Dành cho da hỗn hợp', '500ml', 335.000, 100), -- Tẩy trang Bioderma
-    (5, 3, 'Làm sạch & Giảm dầu', '500ml', 262.000, 200), -- Tẩy trang cocoon
-    (6, 4, 'Nước tẩy trang hoa hồng', '500ml', 250.000, 150), -- Tẩy trang cocoon
-    (7, 5, 'Dành cho da thường', '200ml', 404.000, 400), -- Toner La-Roche Posay
-    (8, 5, 'Dành cho da nhạy cảm', '200ml', 420.000, 300), -- Toner La-Roche Posay
-    (9, 6, 'Dịu nhẹ', '350ml', 145.000, 250), -- Toner Good Skins
-    (10, 7, 'Dành cho da nhạy cảm', '180ml', 218.000, 500), -- Toner klairs
-    (11, 8, 'Dành cho da nhạy cảm', '500ml', 289.000, 600), -- SRM Cetaphil
-    (12, 9, 'Dành cho da thường', '473ml', 326.000, 420), -- SRM CeraVe
-    (13, 10, 'Không chứa xà phòng cho da dầu', '400ml', 408.000, 340), -- SRM SVR
-    (14, 11, '0.5% BHA', '150ml', 117.000, 200), -- Gel RM Cosrx Good Morning Gel
-    (15, 12, 'Dành cho da dầu', '400ml', 394.000, 520), -- SRM La Roche-Posay
-    (16, 13, 'Dành cho da nhờn mụn', '400ml', 402.000, 300), -- Gel RM Eucerin
-    (17, 14, '110', '30ml', 158.000, 300), -- Kem nền Maybelline 110
-    (18, 14, '115', '30ml', 158.000, 300), -- Kem nền Maybelline 115
-    (19, 14, '125', '30ml', 158.000, 300), -- Kem nền Maybelline 125
-    (20, 15, 'Dưỡng ẩm sáng', '25ml', 10.000, 300), -- Mặt nạ Colorkey
-    (21, 15, 'Dưỡng ẩm căng bóng', '25ml', 12.000, 300), -- Mặt nạ Colorkey
-    (22, 15, 'Dưỡng ẩm dịu da thảo dược', '25ml', 12.000, 300), -- Mặt nạ Colorkey
-    (23, 15, 'Dưỡng ẩm ngừa mụn chiết xuất cây phỉ', '25ml', 11.000, 300), -- Mặt nạ Colorkey
-    (24, 16, 'Cho da nhạy cảm SPF 50+', '50ml', 236.000, 300), -- KCN Centella
-    (25, 17, 'Bảo vệ khỏi tia UV', '70ml', 249.000, 300), -- KCN Pekah
-    (26, 18, 'Túi vuông', '240 miếng', 52.000, 300), -- BTT Kokimi
-    (27, 19, 'Giảm thâm nám & dưỡng sáng', '40ml', 837.000, 300), -- Kem dưỡng La Roche-Posay
-    (28, 20, 'Phục hồi da đa công dụng', '100ml', 462.000, 300); -- Kem dưỡng La Roche-Posay
+-- Insert vào bảng images
+INSERT INTO images (public_id) VALUES
+                                   -- Bông tẩy trang
+                                   ('bongtaytrang_2_lfnt20'),
 
--- Insert vào bảng product
-INSERT
-INTO category (id, name)
-VALUES (1, 'Tẩy trang'),
-       (2, 'Toner'),
-       (3, 'Sửa rữa mặt'),
-       (4, 'Kem chống nắng'),
-       (5, 'Bông tẩy trang'),
-       (6, 'Kem dưỡng'),
-       (7, 'Mặt nạ'),
-       (8, 'Serum'),
-       (9, 'Kem nền');
+                                   -- Kem chống nắng
+                                   ('kemchongnang_1_bp0nn2'),
+                                   ('kemchongnang_3_hokixh'),
 
--- Insert vào bảng productvariant
--- TẨY TRANG LOREAL
+                                   -- Kem dưỡng
+                                   ('kemduong_2_ihc8k9'),
+                                   ('kemduong_3_fsad8v'),
+
+                                   -- Kem nền
+                                   ('kemnen_1_hx31s3'),
+                                   ('kemnen_2_cqauno'),
+                                   ('kemnen_3_dixgtf'),
+
+                                   -- Mặt nạ
+                                   ('matna_6_ksq1v8'),
+                                   ('matna_7_a8xpoa'),
+                                   ('matna_8_ppxwv6'),
+                                   ('matna_8_ppxwv6'),
+
+                                   -- Serum
+                                   ('serum_1_oqbjgm'),
+                                   ('serum_2_czide8'),
+
+                                   -- Sữa rửa mặt
+                                   ('Suaruamat_1_tfufiu'),
+                                   ('suaruamat_2_wjc1lo'),
+                                   ('suaruamat_3_vyzhey'),
+                                   ('suaruamat_4_d3tud0'),
+                                   ('suaruamat_5_fnugul'),
+                                   ('suaruamat_6_lu4q4u'),
+
+                                   -- Toner
+                                   ('toner_1_z6cly2'),
+                                   ('toner_2_mtb6fa'),
+                                   ('toner_3_ighub3'),
+                                   ('toner_4_vsuxev'),
+
+                                   -- Tẩy trang
+                                   ('taytrang_1_uyqph1'),
+                                   ('taytrang_2_rd7jan'),
+                                   ('taytrang_3_mdcx6w'),
+                                   ('taytrang_4_xx0afb'),
+                                   ('taytrang_5_vkth95'),
+                                   ('taytrang_6_am111n');
+
 INSERT INTO product (id, name, price, description, brand_id, category_id, view_count)
 VALUES
     (1, 'Nước tẩy trang L\'Oreal Paris Micellar Water 3-in-1', 171000.0, 'Nước tẩy trang dịu nhẹ với công nghệ Micellar, làm sạch lớp trang điểm và bụi bẩn hiệu quả, không gây khô da, phù hợp mọi loại da.', 15, 1, 0),
@@ -105,59 +116,37 @@ VALUES
     (19, 'Kem dưỡng La Roche-Posay', 837000.0, 'Kem dưỡng chứa niacinamide và vitamin C, giúp giảm thâm nám, dưỡng sáng da và cải thiện sắc tố rõ rệt.', 6, 6, 0),
     (20, 'Kem dưỡng La Roche-Posay đa công dụng', 462000.0, 'Kem dưỡng phục hồi đa năng, làm dịu và tái tạo da nhanh chóng, hoàn hảo cho da nhạy cảm sau điều trị.', 6, 6, 0);
 
--- Insert vào bảng images
-INSERT INTO images (public_id) VALUES
-                                    -- Bông tẩy trang
-                                    ('bongtaytrang_2_lfnt20'),
-
-                                    -- Kem chống nắng
-                                    ('kemchongnang_1_bp0nn2'),
-                                    ('kemchongnang_3_hokixh'),
-
-                                    -- Kem dưỡng
-                                    ('kemduong_2_ihc8k9'),
-                                    ('kemduong_3_fsad8v'),
-
-                                    -- Kem nền
-                                    ('kemnen_1_hx31s3'),
-                                    ('kemnen_2_cqauno'),
-                                    ('kemnen_3_dixgtf'),
-
-                                    -- Mặt nạ
-                                    ('matna_6_ksq1v8'),
-                                    ('matna_7_a8xpoa'),
-                                    ('matna_8_ppxwv6'),
-                                    ('matna_8_ppxwv6'),
-
-                                    -- Serum
-                                    ('serum_1_oqbjgm'),
-                                    ('serum_2_czide8'),
-
-                                    -- Sữa rửa mặt
-                                    ('Suaruamat_1_tfufiu'),
-                                    ('suaruamat_2_wjc1lo'),
-                                    ('suaruamat_3_vyzhey'),
-                                    ('suaruamat_4_d3tud0'),
-                                    ('suaruamat_5_fnugul'),
-                                    ('suaruamat_6_lu4q4u'),
-
-                                    -- Toner
-                                    ('toner_1_z6cly2'),
-                                    ('toner_2_mtb6fa'),
-                                    ('toner_3_ighub3'),
-                                    ('toner_4_vsuxev'),
-
-                                    -- Tẩy trang
-                                    ('taytrang_1_uyqph1'),
-                                    ('taytrang_2_rd7jan'),
-                                    ('taytrang_3_mdcx6w'),
-                                    ('taytrang_4_xx0afb'),
-                                    ('taytrang_5_vkth95'),
-                                    ('taytrang_6_am111n');
-
--- Insert vào bảng productimage
--- Xóa bảng productimage hiện tại (nếu cần)
-DELETE FROM productimage;
+-- Insert vào bảng productvariant
+INSERT INTO productvariant (id, product_id, product_attribute, variant, price, quantity)
+VALUES
+    (1, 1, 'Tươi mát', '400ml', 171000, 300), -- Tẩy trang Loreal
+    (2, 1, 'Làm sạch sâu', '400ml', 200000, 400), -- Tẩy trang Loreal
+    (3, 2, 'Dành cho da nhạy cảm', '500ml', 335000, 500), -- Tẩy trang Bioderma
+    (4, 2, 'Dành cho da hỗn hợp', '500ml', 335000, 100), -- Tẩy trang Bioderma
+    (5, 3, 'Làm sạch & Giảm dầu', '500ml', 262000, 200), -- Tẩy trang cocoon
+    (6, 4, 'Nước tẩy trang hoa hồng', '500ml', 250000, 150), -- Tẩy trang cocoon
+    (7, 5, 'Dành cho da thường', '200ml', 404000, 400), -- Toner La-Roche Posay
+    (8, 5, 'Dành cho da nhạy cảm', '200ml', 420000, 300), -- Toner La-Roche Posay
+    (9, 6, 'Dịu nhẹ', '350ml', 145000, 250), -- Toner Good Skins
+    (10, 7, 'Dành cho da nhạy cảm', '180ml', 218000, 500), -- Toner klairs
+    (11, 8, 'Dành cho da nhạy cảm', '500ml', 289000, 600), -- SRM Cetaphil
+    (12, 9, 'Dành cho da thường', '473ml', 326000, 420), -- SRM CeraVe
+    (13, 10, 'Không chứa xà phòng cho da dầu', '400ml', 408000, 340), -- SRM SVR
+    (14, 11, '0.5% BHA', '150ml', 117000, 200), -- Gel RM Cosrx Good Morning Gel
+    (15, 12, 'Dành cho da dầu', '400ml', 394000, 520), -- SRM La Roche-Posay
+    (16, 13, 'Dành cho da nhờn mụn', '400ml', 402000, 300), -- Gel RM Eucerin
+    (17, 14, '110', '30ml', 158000, 300), -- Kem nền Maybelline 110
+    (18, 14, '115', '30ml', 158000, 300), -- Kem nền Maybelline 115
+    (19, 14, '125', '30ml', 158000, 300), -- Kem nền Maybelline 125
+    (20, 15, 'Dưỡng ẩm sáng', '25ml', 10000, 300), -- Mặt nạ Colorkey
+    (21, 15, 'Dưỡng ẩm căng bóng', '25ml', 12000, 300), -- Mặt nạ Colorkey
+    (22, 15, 'Dưỡng ẩm dịu da thảo dược', '25ml', 12000, 300), -- Mặt nạ Colorkey
+    (23, 15, 'Dưỡng ẩm ngừa mụn chiết xuất cây phỉ', '25ml', 11000, 300), -- Mặt nạ Colorkey
+    (24, 16, 'Cho da nhạy cảm SPF 50+', '50ml', 236000, 300), -- KCN Centella
+    (25, 17, 'Bảo vệ khỏi tia UV', '70ml', 249000, 300), -- KCN Pekah
+    (26, 18, 'Túi vuông', '240 miếng', 52000, 300), -- BTT Kokimi
+    (27, 19, 'Giảm thâm nám & dưỡng sáng', '40ml', 837000, 300), -- Kem dưỡng La Roche-Posay
+    (28, 20, 'Phục hồi da đa công dụng', '100ml', 462000, 300); -- Kem dưỡng
 
 -- Insert vào bảng productimage
 INSERT INTO productimage (product_variant_id, image_id, main_image)
@@ -191,7 +180,7 @@ VALUES
 
     -- Mặt nạ (category_id=7, product_id=15)
     (20, 9, TRUE),  -- Mặt nạ Colorkey - Dưỡng ẩm sáng (product_id=15) -> matna_6_ksq1v8
-    (21, 11, FALSE), -- Mặt nạ Colorkey - Dưỡng ẩm căng bóng (product_id=15) -> matna_7_a8xpoa
+    (21, 10, FALSE), -- Mặt nạ Colorkey - Dưỡng ẩm căng bóng (product_id=15) -> matna_7_a8xpoa
     (22, 11, FALSE), -- Mặt nạ Colorkey - Dưỡng ẩm dịu da (product_id=15) -> matna_8_ppxwv6
     (23, 12, FALSE), -- Mặt nạ Colorkey - Dưỡng ẩm ngừa mụn (product_id=15) -> matna_8_ppxwv6
 

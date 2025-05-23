@@ -13,5 +13,4 @@ public class ProductVariantDTO {
     private String variant;
     private Double price;
     private Integer quantity;
-    private List<String> images;
-}
+    private List<ImageDTO> images;}
