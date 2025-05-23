@@ -3,7 +3,7 @@ package org.example.chuyendeweb_be.config;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Connector;
 import org.example.chuyendeweb_be.security.JwtAuthenticationFilter;
-//import org.example.chuyendeweb_be.security.OAuth2LoginSuccessHandler;
+import org.example.chuyendeweb_be.security.OAuth2LoginSuccessHandler;
 import org.example.chuyendeweb_be.security.OAuth2LoginSuccessHandler;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
@@ -38,12 +38,23 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/login", "/api/auth/register","/api/products/grid", "/api/auth/refresh-token", "/oauth2/**", "/api/auth/logout","/login/**",("/api/images/**")).permitAll()
+                        .requestMatchers("/api/auth/login", "/api/auth/register",
+                                "/api/products/grid", "/api/auth/refresh-token",
+                                "/oauth2/**", "/api/auth/logout","/login/**",
+                                "/api/images/**",
+                                "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setContentType("application/json");
+                            response.setStatus(401);
+                            response.getOutputStream().println("{ \"error\": \"Unauthorized\" }");
+                        })
+                )
                 .build();
     }
 
@@ -54,6 +65,8 @@ public class SecurityConfig {
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
+
+
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
