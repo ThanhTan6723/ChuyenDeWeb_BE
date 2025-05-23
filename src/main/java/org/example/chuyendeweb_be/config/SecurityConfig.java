@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/auth/login", "/api/auth/register",
-                                "/api/products/grid", "/api/auth/refresh-token",
+                                "/api/products/grid","/api/products/**", "/api/auth/refresh-token",
                                 "/oauth2/**", "/api/auth/logout","/login/**",
                                 "/api/images/**",
                                 "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
