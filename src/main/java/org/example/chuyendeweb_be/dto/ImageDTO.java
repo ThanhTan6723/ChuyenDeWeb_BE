@@ -9,7 +9,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ImageDTO implements Serializable {
-    private Long id;
-    private String imageUrl;
-
+    private String publicId;
+    private boolean isMain;
 }
