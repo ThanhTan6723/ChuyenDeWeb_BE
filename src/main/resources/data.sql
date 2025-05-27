@@ -34,7 +34,7 @@ VALUES (1, 'KOKIMI'),
        (9, 'klairs'),
        (10, 'Cetaphil'),
        (11, 'CeraVe'),
-       (12, 'Good Morning'),
+       (12, 'Cosrx'),
        (13, 'SVR'),
        (14, 'Eucerin'),
        (15, 'LOREAL'),
@@ -93,28 +93,28 @@ INSERT INTO images (public_id) VALUES
                                    ('taytrang_5_vkth95'),
                                    ('taytrang_6_am111n');
 
-INSERT INTO product (id, name, price, description, brand_id, category_id, view_count)
+INSERT INTO product (id, name, description, brand_id, category_id, view_count)
 VALUES
-    (1, 'Nước tẩy trang L\'Oreal Paris Micellar Water 3-in-1', 171000.0, 'Nước tẩy trang dịu nhẹ với công nghệ Micellar, làm sạch lớp trang điểm và bụi bẩn hiệu quả, không gây khô da, phù hợp mọi loại da.', 15, 1, 0),
-    (2, 'Nước tẩy trang Bioderma Sensibio H2O', 335000.0, 'Nước tẩy trang không cồn dành cho da nhạy cảm, làm sạch sâu mà vẫn giữ độ ẩm tự nhiên, được bác sĩ da liễu khuyên dùng.', 16, 1, 0),
-    (3, 'Nước tẩy trang Cocoon', 262000.0, 'Nước tẩy trang thiên nhiên với chiết xuất hữu cơ, làm sạch da nhẹ nhàng, giảm dầu thừa mà không gây căng khô.', 17, 1, 0),
-    (4, 'Nước tẩy trang hoa hồng Cocoon', 250000.0, 'Nước tẩy trang chứa chiết xuất hoa hồng hữu cơ, mang lại làn da sạch sẽ, tươi mát và thư giãn sau mỗi lần sử dụng.', 17, 1, 0),
-    (5, 'Toner La-Roche Posay', 404000.0, 'Toner không cồn giúp cân bằng độ pH, làm dịu da nhạy cảm và chuẩn bị da sẵn sàng cho các bước dưỡng tiếp theo.', 6, 2, 0),
-    (6, 'Toner Good Skins', 145000.0, 'Toner dịu nhẹ không paraben, dưỡng ẩm và làm sạch da, mang lại làn da mềm mại, rạng rỡ suốt cả ngày.', 18, 2, 0),
-    (7, 'Toner Klairs', 218000.0, 'Toner không cồn với chiết xuất thực vật, làm dịu và cấp ẩm tức thì, lý tưởng cho da nhạy cảm cần phục hồi.', 9, 2, 0),
-    (8, 'Sữa rửa mặt Cetaphil', 289000.0, 'Sữa rửa mặt không tạo bọt, làm sạch dịu nhẹ mà không làm mất độ ẩm, phù hợp cho da nhạy cảm và dễ kích ứng.', 10, 3, 0),
-    (9, 'Sữa rửa mặt CeraVe', 326000.0, 'Sữa rửa mặt chứa ceramides, làm sạch da và hỗ trợ phục hồi hàng rào bảo vệ, lý tưởng cho da thường đến da khô.', 11, 3, 0),
-    (10, 'Sữa rửa mặt SVR', 408000.0, 'Sữa rửa mặt không xà phòng, làm sạch sâu và kiểm soát dầu thừa, giúp da dầu luôn thông thoáng mà không khô ráp.', 13, 3, 0),
-    (11, 'Cosrx Good Morning Gel', 117000.0, 'Gel rửa mặt chứa 0.5% BHA, làm sạch lỗ chân lông và ngăn ngừa mụn, hoàn hảo cho da dầu và da hỗn hợp.', 18, 3, 0),
-    (12, 'Sữa rửa mặt La Roche-Posay', 394000.0, 'Sữa rửa mặt dành cho da dầu, làm sạch và giảm bóng nhờn hiệu quả, giữ da mịn màng mà không gây kích ứng.', 6, 3, 0),
-    (13, 'Gel Rửa mặt Eucerin', 402000.0, 'Gel rửa mặt cho da dầu và mụn, làm sạch sâu, kiểm soát dầu và hỗ trợ giảm mụn với công thức không gây khô da.', 14, 3, 0),
-    (14, 'Kem nền Maybelline', 158000.0, 'Kem nền che phủ tự nhiên, mịn nhẹ với đa dạng tông màu, mang lại lớp nền hoàn hảo cho makeup hàng ngày.', 7, 9, 0),
-    (15, 'Mặt nạ Colorkey', 12000.0, 'Mặt nạ dưỡng ẩm chiết xuất thiên nhiên, cấp nước tức thì và làm dịu da, phù hợp cho mọi loại da cần tươi mới.', 19, 7, 0),
-    (16, 'Kem chống nắng Centella', 236000.0, 'Kem chống nắng SPF 50+ chứa chiết xuất rau má, bảo vệ da khỏi tia UV và làm dịu da nhạy cảm hiệu quả.', 4, 4, 0),
-    (17, 'KCN Pekah', 249000.0, 'Kem chống nắng vật lý SPF cao, bảo vệ da khỏi tia UV mà không gây kích ứng, lý tưởng cho da nhạy cảm và da dầu.', 2, 4, 0),
-    (18, 'Bông tẩy trang Kokimi', 52000.0, 'Bông tẩy trang mềm mại, không xơ, hỗ trợ làm sạch da hiệu quả với thiết kế tiện lợi 240 miếng/túi.', 1, 5, 0),
-    (19, 'Kem dưỡng La Roche-Posay', 837000.0, 'Kem dưỡng chứa niacinamide và vitamin C, giúp giảm thâm nám, dưỡng sáng da và cải thiện sắc tố rõ rệt.', 6, 6, 0),
-    (20, 'Kem dưỡng La Roche-Posay đa công dụng', 462000.0, 'Kem dưỡng phục hồi đa năng, làm dịu và tái tạo da nhanh chóng, hoàn hảo cho da nhạy cảm sau điều trị.', 6, 6, 0);
+    (1, 'Nước tẩy trang L\'Oreal Paris Micellar Water 3-in-1', 'Nước tẩy trang dịu nhẹ với công nghệ Micellar, làm sạch lớp trang điểm và bụi bẩn hiệu quả, không gây khô da, phù hợp mọi loại da.', 15, 1, 0),
+    (2, 'Nước tẩy trang Bioderma Sensibio H2O', 'Nước tẩy trang không cồn dành cho da nhạy cảm, làm sạch sâu mà vẫn giữ độ ẩm tự nhiên, được bác sĩ da liễu khuyên dùng.', 16, 1, 0),
+    (3, 'Nước tẩy trang Cocoon', 'Nước tẩy trang thiên nhiên với chiết xuất hữu cơ, làm sạch da nhẹ nhàng, giảm dầu thừa mà không gây căng khô.', 17, 1, 0),
+    (4, 'Nước tẩy trang hoa hồng Cocoon', 'Nước tẩy trang chứa chiết xuất hoa hồng hữu cơ, mang lại làn da sạch sẽ, tươi mát và thư giãn sau mỗi lần sử dụng.', 17, 1, 0),
+    (5, 'Toner La-Roche Posay', 'Toner không cồn giúp cân bằng độ pH, làm dịu da nhạy cảm và chuẩn bị da sẵn sàng cho các bước dưỡng tiếp theo.', 6, 2, 0),
+    (6, 'Toner Good Skins', 'Toner dịu nhẹ không paraben, dưỡng ẩm và làm sạch da, mang lại làn da mềm mại, rạng rỡ suốt cả ngày.', 18, 2, 0),
+    (7, 'Toner Klairs', 'Toner không cồn với chiết xuất thực vật, làm dịu và cấp ẩm tức thì, lý tưởng cho da nhạy cảm cần phục hồi.', 9, 2, 0),
+    (8, 'Sữa rửa mặt Cetaphil', 'Sữa rửa mặt không tạo bọt, làm sạch dịu nhẹ mà không làm mất độ ẩm, phù hợp cho da nhạy cảm và dễ kích ứng.', 10, 3, 0),
+    (9, 'Sữa rửa mặt CeraVe', 'Sữa rửa mặt chứa ceramides, làm sạch da và hỗ trợ phục hồi hàng rào bảo vệ, lý tưởng cho da thường đến da khô.', 11, 3, 0),
+    (10, 'Sữa rửa mặt SVR', 'Sữa rửa mặt không xà phòng, làm sạch sâu và kiểm soát dầu thừa, giúp da dầu luôn thông thoáng mà không khô ráp.', 13, 3, 0),
+    (11, 'Cosrx Good Morning Gel', 'Gel rửa mặt chứa 0.5% BHA, làm sạch lỗ chân lông và ngăn ngừa mụn, hoàn hảo cho da dầu và da hỗn hợp.', 12, 3, 0),
+    (12, 'Sữa rửa mặt La Roche-Posay', 'Sữa rửa mặt dành cho da dầu, làm sạch và giảm bóng nhờn hiệu quả, giữ da mịn màng mà không gây kích ứng.', 6, 3, 0),
+    (13, 'Gel Rửa mặt Eucerin', 'Gel rửa mặt cho da dầu và mụn, làm sạch sâu, kiểm soát dầu và hỗ trợ giảm mụn với công thức không gây khô da.', 14, 3, 0),
+    (14, 'Kem nền Maybelline', 'Kem nền che phủ tự nhiên, mịn nhẹ với đa dạng tông màu, mang lại lớp nền hoàn hảo cho makeup hàng ngày.', 7, 9, 0),
+    (15, 'Mặt nạ Colorkey', 'Mặt nạ dưỡng ẩm chiết xuất thiên nhiên, cấp nước tức thì và làm dịu da, phù hợp cho mọi loại da cần tươi mới.', 19, 7, 0),
+    (16, 'Kem chống nắng Centella', 'Kem chống nắng SPF 50+ chứa chiết xuất rau má, bảo vệ da khỏi tia UV và làm dịu da nhạy cảm hiệu quả.', 4, 4, 0),
+    (17, 'KCN Pekah', 'Kem chống nắng vật lý SPF cao, bảo vệ da khỏi tia UV mà không gây kích ứng, lý tưởng cho da nhạy cảm và da dầu.', 2, 4, 0),
+    (18, 'Bông tẩy trang Kokimi', 'Bông tẩy trang mềm mại, không xơ, hỗ trợ làm sạch da hiệu quả với thiết kế tiện lợi 240 miếng/túi.', 1, 5, 0),
+    (19, 'Kem dưỡng La Roche-Posay', 'Kem dưỡng chứa niacinamide và vitamin C, giúp giảm thâm nám, dưỡng sáng da và cải thiện sắc tố rõ rệt.', 6, 6, 0),
+    (20, 'Kem dưỡng La Roche-Posay đa công dụng', 'Kem dưỡng phục hồi đa năng, làm dịu và tái tạo da nhanh chóng, hoàn hảo cho da nhạy cảm sau điều trị.', 6, 6, 0);
 
 -- Insert vào bảng productvariant
 INSERT INTO productvariant (id, product_id, product_attribute, variant, price, quantity)
@@ -161,16 +161,16 @@ VALUES
 
     -- Toner (category_id=2, product_id=5,6,7)
     (7, 21, TRUE),   -- Toner La-Roche Posay - Da thường (product_id=5) -> toner_1_z6cly2
-    (8, 22, FALSE),  -- Toner La-Roche Posay - Da nhạy cảm (product_id=5) -> toner_2_mtb6fa
-    (9, 23, TRUE),   -- Toner Good Skins - Dịu nhẹ (product_id=6) -> toner_3_ighub3
+    (8, 23, FALSE),  -- Toner La-Roche Posay - Da nhạy cảm (product_id=5) -> toner_2_mtb6fa
+    (9, 22, TRUE),   -- Toner Good Skins - Dịu nhẹ (product_id=6) -> toner_3_ighub3
     (10, 24, TRUE),  -- Toner Klairs - Da nhạy cảm (product_id=7) -> toner_4_vsuxev
 
     -- Sữa rửa mặt (category_id=3, product_id=8,9,10,11,12,13)
     (11, 15, TRUE),  -- SRM Cetaphil - Da nhạy cảm (product_id=8) -> Suaruamat_1_tfufiu
     (12, 16, TRUE),  -- SRM CeraVe - Da thường (product_id=9) -> suaruamat_2_wjc1lo
-    (13, 17, TRUE),  -- SRM SVR - Da dầu (product_id=10) -> suaruamat_3_vyzhey
-    (14, 18, TRUE),  -- Gel RM Cosrx - 0.5% BHA (product_id=11) -> suaruamat_4_d3tud0
-    (15, 19, TRUE),  -- SRM La Roche-Posay - Da dầu (product_id=12) -> suaruamat_5_fnugul
+    (13, 19, TRUE),  -- SRM SVR - Da dầu (product_id=10) -> suaruamat_3_vyzhey
+    (14, 17, TRUE),  -- Gel RM Cosrx - 0.5% BHA (product_id=11) -> suaruamat_4_d3tud0
+    (15, 18, TRUE),  -- SRM La Roche-Posay - Da dầu (product_id=12) -> suaruamat_5_fnugul
     (16, 20, TRUE),  -- Gel RM Eucerin - Da nhờn mụn (product_id=13) -> suaruamat_6_lu4q4u
 
     -- Kem nền (category_id=9, product_id=14)

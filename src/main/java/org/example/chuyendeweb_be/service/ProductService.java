@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,7 +61,7 @@ public class ProductService {
             variantDTO.setId(variant.getId());
             variantDTO.setAttribute(variant.getProductAttribute() != null ? variant.getProductAttribute() : "N/A");
             variantDTO.setVariant(variant.getVariant() != null ? variant.getVariant() : "N/A");
-            variantDTO.setPrice(variant.getPrice() != 0 ? variant.getPrice() : 0.0);
+            variantDTO.setPrice(variant.getPrice() != null ? variant.getPrice(): new BigDecimal(0));
             variantDTO.setQuantity(variant.getQuantity() != 0 ? variant.getQuantity() : 0);
 
             List<ImageDTO> images = variant.getProductImageList() != null
@@ -76,7 +77,7 @@ public class ProductService {
             variantDTO.setImages(images);
             return variantDTO;
         }).collect(Collectors.toList())
-                : Collections.singletonList(new ProductVariantDTO(null, "N/A", "N/A", 0.0, 0, Collections.singletonList(new ImageDTO("default_image", true))));
+                : Collections.singletonList(new ProductVariantDTO(null, "N/A", "N/A", new BigDecimal(0), 0, Collections.singletonList(new ImageDTO("default_image", true))));
 
         dto.setVariants(variants);
         return dto;
@@ -118,7 +119,6 @@ public class ProductService {
                     .ifPresent(img -> dto.setMainImageUrl(img.getImage().getPublicId()));
         } else {
             logger.warn("No variants found for product ID: {}", product.getId());
-            dto.setPrice(product.getPrice() != null ? product.getPrice() : 0.0);
             dto.setStock(0);
             dto.setAttributes("N/A");
         }

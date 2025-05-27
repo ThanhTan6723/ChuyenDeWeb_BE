@@ -19,9 +19,6 @@ public class Product {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "price", nullable = false)
-    private Double price;
-
     @ManyToOne
     @JoinColumn(name = "brand_id")
     private Brand brand;
