@@ -11,12 +11,15 @@ import org.example.chuyendeweb_be.repository.RoleRepository;
 import org.example.chuyendeweb_be.repository.UserRepository;
 import org.example.chuyendeweb_be.security.JwtService;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Service
 @RequiredArgsConstructor
@@ -92,4 +95,17 @@ public class AuthService {
                 .build();
     }
 
+    public Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() instanceof String) {
+            throw new UsernameNotFoundException("No authenticated user found");
+        }
+
+        Object principal = authentication.getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        return user.getId();
+    }
 }

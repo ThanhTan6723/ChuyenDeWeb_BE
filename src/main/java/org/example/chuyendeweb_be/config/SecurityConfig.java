@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/**", "/api/products/grid", "/api/products/**", "/api/images/**","/api/auth/refresh-token", "/oauth2/**", "/api/auth/logout").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/products/grid", "/api/products/**","/api/cart/**", "/api/images/**", "/api/auth/refresh-token", "/oauth2/**", "/api/auth/logout", "api/auth/forgot-password", "api/auth/reset-password").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
