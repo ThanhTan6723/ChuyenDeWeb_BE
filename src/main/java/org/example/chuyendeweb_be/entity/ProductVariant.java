@@ -3,6 +3,7 @@ package org.example.chuyendeweb_be.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -24,7 +25,7 @@ public class ProductVariant {
     @Column(name = "variant", length = 100)
     private String variant;
 
-    private double price;
+    private BigDecimal price;
     private int quantity;
 
     @OneToMany(mappedBy = "productVariant")

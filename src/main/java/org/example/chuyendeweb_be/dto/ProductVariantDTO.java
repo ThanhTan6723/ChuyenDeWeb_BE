@@ -2,6 +2,7 @@ package org.example.chuyendeweb_be.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -11,6 +12,6 @@ public class ProductVariantDTO {
     private Long id;
     private String attribute;
     private String variant;
-    private Double price;
+    private BigDecimal price;
     private Integer quantity;
     private List<ImageDTO> images;}
