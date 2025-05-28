@@ -3,7 +3,6 @@ package org.example.chuyendeweb_be.user.config;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Connector;
 import org.example.chuyendeweb_be.user.security.JwtAuthenticationFilter;
-//import org.example.chuyendeweb_be.security.OAuth2LoginSuccessHandler;
 import org.example.chuyendeweb_be.user.security.OAuth2LoginSuccessHandler;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
@@ -38,9 +37,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/**", "/api/products/grid", "/api/products/**","/api/cart/**", "/api/images/**",
-                                "/api/auth/refresh-token", "/oauth2/**", "/api/auth/logout", "/api/auth/forgot-password",
-                                "/api/auth/reset-password").permitAll()
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/api/products/grid",
+                                "/api/products/**",
+                                "/api/images/**",
+                                "/api/auth/refresh-token",
+                                "/oauth2/**",
+                                "/api/auth/logout",
+                                "/api/auth/forgot-password",
+                                "/api/auth/reset-password",
+                                "/api/user/update"
+                        ).permitAll()
+                        .requestMatchers("/api/cart/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
@@ -53,7 +62,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:3000", "https://localhost:3000", "https://localhost:8443"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);

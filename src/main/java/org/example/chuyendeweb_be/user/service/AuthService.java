@@ -58,7 +58,7 @@ public class AuthService {
             throw new BadCredentialsException("Mật khẩu không hợp lệ");
 
         // Cập nhật token version
-        user.setTokenVersion(jwtService.generateTokenVersion());
+//        user.setTokenVersion(jwtService.generateTokenVersion());
         userRepository.save(user);
 
         UserDetails userDetails = loadUserDetails(user);
@@ -87,7 +87,7 @@ public class AuthService {
         }
 
         // Tạo token version mới cho refresh token rotation
-        user.setTokenVersion(jwtService.generateTokenVersion());
+//        user.setTokenVersion(jwtService.generateTokenVersion());
         userRepository.save(user);
 
         return new AuthResponseDTO(

@@ -115,16 +115,16 @@ public class AuthController {
         headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("accessToken", authResponse.getAccessToken())
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .path("/")
-                .maxAge(15 * 60)
+                .maxAge(15*60)
                 .build().toString());
         headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("refreshToken", authResponse.getRefreshToken())
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .path("/")
-                .maxAge(7 * 24 * 60 * 60)
+                .maxAge(30* 60)
                 .build().toString());
         return headers;
     }
@@ -133,7 +133,7 @@ public class AuthController {
         return ResponseCookie.from(name, "")
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .path("/")
                 .maxAge(0)
                 .build();
