@@ -27,7 +27,7 @@ public class CartController {
     public ResponseEntity<List<CartItemDTO>> getCart(HttpServletRequest request) {
         Long userId = authService.getCurrentUserId();
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // Trả về 401 thay vì chuyển hướng
         }
 
         List<CartItem> cartItems = cartService.getCartItemsByUserId(userId);
@@ -37,14 +37,13 @@ public class CartController {
 
     @PostMapping
     public ResponseEntity<CartItemDTO> addToCart(@RequestBody CartItemDTO cartItemDTO, HttpServletRequest request) {
-        // Kiểm tra dữ liệu đầu vào
         if (cartItemDTO == null || cartItemDTO.getProductVariantId() == null || cartItemDTO.getQuantity() <= 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
         Long userId = authService.getCurrentUserId();
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // Trả về 401
         }
 
         try {
@@ -60,21 +59,48 @@ public class CartController {
     public ResponseEntity<List<CartItemDTO>> updateCart(@RequestBody List<CartItemDTO> cartItemDTOs, HttpServletRequest request) {
         Long userId = authService.getCurrentUserId();
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // Trả về 401
         }
 
-        List<CartItem> updatedItems = cartService.updateCart(userId, cartItemDTOs);
-        List<CartItemDTO> responseItems = updatedItems.stream()
-                .map(this::convertToCartItemDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(responseItems);
+        try {
+            List<CartItem> updatedItems = cartService.updateCart(userId, cartItemDTOs);
+            List<CartItemDTO> responseItems = updatedItems.stream()
+                    .map(this::convertToCartItemDTO)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(responseItems);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @PatchMapping("/{productVariantId}/quantity")
+    public ResponseEntity<CartItemDTO> updateCartItemQuantity(
+            @PathVariable Long productVariantId,
+            @RequestBody CartItemDTO cartItemDTO,
+            HttpServletRequest request) {
+        Long userId = authService.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        if (cartItemDTO.getQuantity() < 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        try {
+            CartItem updatedItem = cartService.updateCartItemQuantity(userId, productVariantId, cartItemDTO.getQuantity());
+            CartItemDTO responseDTO = convertToCartItemDTO(updatedItem);
+            return ResponseEntity.ok(responseDTO);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @DeleteMapping("/{productVariantId}")
     public ResponseEntity<Void> removeFromCart(@PathVariable Long productVariantId, HttpServletRequest request) {
         Long userId = authService.getCurrentUserId();
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Trả về 401
         }
 
         try {
@@ -87,37 +113,29 @@ public class CartController {
 
     private CartItemDTO convertToCartItemDTO(CartItem cartItem) {
         CartItemDTO dto = new CartItemDTO();
-
-        // Thông tin biến thể sản phẩm
         dto.setProductVariantId(cartItem.getProductVariant().getId());
         dto.setQuantity(cartItem.getQuantity());
         dto.setPrice(cartItem.getProductVariant().getPrice());
-
-        // Chi tiết biến thể sản phẩm
         dto.setAttribute(cartItem.getProductVariant().getProductAttribute());
         dto.setVariant(cartItem.getProductVariant().getVariant());
-
-        // Thông tin sản phẩm
         dto.setProductId(cartItem.getProductVariant().getProduct().getId());
         dto.setProductName(cartItem.getProductVariant().getProduct().getName());
         dto.setBrandName(cartItem.getProductVariant().getProduct().getBrand().getName());
         dto.setCategoryName(cartItem.getProductVariant().getProduct().getCategory().getName());
 
-        // Xử lý hình ảnh
         List<ProductImage> images = cartItem.getProductVariant().getProductImageList();
-
-        // Đặt hình ảnh chính
         images.stream()
                 .filter(ProductImage::isMainImage)
                 .findFirst()
-                .ifPresent(mainImage ->
-                        dto.setMainImageUrl("https://res.cloudinary.com/your-cloud-name/image/upload/" + mainImage.getImage())
-                );
+                .ifPresent(mainImage -> {
+                    if (mainImage.getImage() != null) {
+                        dto.setMainImageUrl("https://res.cloudinary.com/dp2jfvmlh/image/upload/" + mainImage.getImage().getPublicId());
+                    }
+                });
 
-        // Đặt các hình ảnh phụ
         List<String> additionalImages = images.stream()
-                .filter(img -> !img.isMainImage())
-                .map(img -> "https://res.cloudinary.com/your-cloud-name/image/upload/" + img.getImage())
+                .filter(img -> !img.isMainImage() && img.getImage() != null)
+                .map(img -> "https://res.cloudinary.com/dp2jfvmlh/image/upload/" + img.getImage().getPublicId())
                 .collect(Collectors.toList());
         dto.setAdditionalImageUrls(additionalImages);
 

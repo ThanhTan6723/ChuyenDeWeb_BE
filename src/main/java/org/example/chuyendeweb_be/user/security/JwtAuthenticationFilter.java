@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final UserRepository userRepository; // Thêm để lấy tokenVersion
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         final String requestPath = request.getServletPath();
-        if (requestPath.startsWith("/api/auth") || requestPath.startsWith("/oauth2")) {
+        if (requestPath.startsWith("/api/auth") || requestPath.startsWith("/oauth2")||requestPath.startsWith("/api/products")||(requestPath.startsWith("/api/users"))) {
             filterChain.doFilter(request, response);
             return;
         }
