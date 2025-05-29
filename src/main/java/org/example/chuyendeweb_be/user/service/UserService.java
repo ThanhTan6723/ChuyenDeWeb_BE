@@ -14,8 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,13 @@ public class UserService {
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public List<UserDTO> getAllUsers() {
+        logger.info("Fetching all users");
+        return userRepository.findAll().stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     public UserDTO updateUser(Long userId, UpdateUserDTO updateUserDTO, String authenticatedUsername) throws IllegalAccessException {
