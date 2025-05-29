@@ -11,6 +11,8 @@ import java.time.Instant;
 @AllArgsConstructor
 public class UserDTO implements Serializable {
     Long id;
+    String username;
+    String email;
     RoleDTO role;
     Integer failed;
     Boolean locked;
