@@ -64,6 +64,7 @@ public class OrderController {
         dto.setDiscountValue(order.getDiscountValue());
         dto.setTotalMoney(order.getTotalMoney());
         dto.setOrderStatus(order.getOrderStatus());
+        dto.setPaymentMethod(order.getPayment().getMethodName());
         return dto;
     }
 

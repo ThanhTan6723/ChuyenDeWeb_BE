@@ -16,7 +16,7 @@ public class Payment {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "mehthod_name", length = 50)
-    private String mehthodName;
+    @Column(name = "method_name", length = 50)
+    private String methodName;
 
 }
