@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         final String requestPath = request.getServletPath();
-        if (requestPath.startsWith("/api/auth") || requestPath.startsWith("/oauth2")||requestPath.startsWith("/api/products")||(requestPath.startsWith("/api/users"))) {
+        if (requestPath.startsWith("/api/auth") || requestPath.startsWith("/oauth2")||requestPath.startsWith("/api/products")||requestPath.startsWith("/api/orders")) {
             filterChain.doFilter(request, response);
             return;
         }
