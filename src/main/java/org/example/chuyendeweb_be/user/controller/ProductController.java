@@ -16,11 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/products")
 @RequiredArgsConstructor
+@RequestMapping("/api/products")
 public class ProductController {
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
     @GetMapping("/grid")
     public ResponseEntity<Map<String, Object>> getProductsForGrid(

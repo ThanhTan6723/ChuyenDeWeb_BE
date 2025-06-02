@@ -18,10 +18,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-public class AdminUserController {
+public class UserAdminController {
 
     private final UserService userService;
-    private static final Logger logger = LoggerFactory.getLogger(AdminUserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserAdminController.class);
 
     @GetMapping("/list")
     // TODO: Reinstating @PreAuthorize("hasRole('ADMIN')") for production to secure this endpoint

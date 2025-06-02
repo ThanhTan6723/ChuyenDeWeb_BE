@@ -1,17 +1,23 @@
 package org.example.chuyendeweb_be.user.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.Instant;
 
-@Data
-public class OrderDTO {
+@Getter
+@Setter
+public class OrderResponseDTO {
+    private Long id;
+    private Instant bookingDate;
+    private Instant deliveryDate;
     private String consigneeName;
     private String consigneePhone;
     private String address;
     private String orderNotes;
-    private List<OrderDetailDTO> orderDetails;
     private BigDecimal ship;
     private BigDecimal discountValue;
+    private BigDecimal totalMoney;
+    private String orderStatus;
 }
