@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.chuyendeweb_be.user.dto.OrderDTO;
 import org.example.chuyendeweb_be.user.dto.OrderDetailDTO;
 import org.example.chuyendeweb_be.user.entity.*;
+import org.example.chuyendeweb_be.user.enums.OrderStatus;
 import org.example.chuyendeweb_be.user.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import java.util.List;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final PaymentRepository paymentRepository;
     private final ProductVariantRepository productVariantRepository;
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
@@ -36,7 +38,8 @@ public class OrderService {
         if (cart.getCartItems().isEmpty()) {
             throw new IllegalArgumentException("Cart is empty");
         }
-
+        Payment payment = paymentRepository.findById(orderDTO.getPaymentId())
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy phương thức thanh toán"));
         // Create new order
         Order order = new Order();
         order.setUser(user);
@@ -47,7 +50,8 @@ public class OrderService {
         order.setOrderNotes(orderDTO.getOrderNotes());
         order.setShip(orderDTO.getShip());
         order.setDiscountValue(orderDTO.getDiscountValue() != null ? orderDTO.getDiscountValue() : BigDecimal.ZERO);
-        order.setOrderStatus("PENDING");
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setPayment(payment);
 
         // Calculate total money and create order details
         BigDecimal totalMoney = BigDecimal.ZERO;
