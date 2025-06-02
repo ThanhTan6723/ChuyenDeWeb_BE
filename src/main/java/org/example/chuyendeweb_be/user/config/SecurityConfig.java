@@ -50,6 +50,8 @@ public class SecurityConfig {
                                 "/api/products/grid",
                                 "/api/products/**",
                                 "/api/orders/**",
+                                "/api/orders/all",
+                                "/api/orders/status/",
                                 "/api/shipping/**",
                                 "/api/shipping/fee",
                                 "/api/images/**",

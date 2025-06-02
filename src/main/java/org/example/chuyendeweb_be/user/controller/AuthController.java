@@ -109,7 +109,8 @@ public class AuthController {
                             "user", Map.of(
                                     "id", user.getId(),
                                     "username", user.getUsername(),
-                                    "email", user.getEmail()
+                                    "email", user.getEmail(),
+                                    "phone",user.getPhone()
                             )
                     ));
         } catch (Exception e) {
