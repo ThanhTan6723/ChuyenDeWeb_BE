@@ -35,19 +35,19 @@ public class Order {
     @Column(name = "ship", precision = 15, scale = 3)
     private BigDecimal ship;
 
-    @Column(name = "discountValue", precision = 15, scale = 3)
+    @Column(name = "discount_value", precision = 15, scale = 3)
     private BigDecimal discountValue;
 
-    @Column(name = "totalMoney", precision = 15, scale = 3)
+    @Column(name = "total_money", precision = 15, scale = 3)
     private BigDecimal totalMoney;
 
     @Column(name = "address")
     private String address;
 
-    @Column(name = "orderNotes")
+    @Column(name = "order_notes")
     private String orderNotes;
 
-    @Column(name = "orderStatus")
+    @Column(name = "order_status")
     private String orderStatus;
 
 }

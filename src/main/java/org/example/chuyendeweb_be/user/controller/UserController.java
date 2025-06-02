@@ -11,26 +11,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
-@RequestMapping("/api/user")
 @Validated
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/user")
 public class UserController {
-
     private final UserService userService;
     private final AuthService authService;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @PutMapping("/update")
+    @PutMapping("/update-profile")
     public ResponseEntity<?> updateUser(@Valid @RequestBody UpdateUserDTO updateUserDTO, Principal principal) {
         try {
             if (principal == null || principal.getName() == null) {
@@ -67,4 +63,5 @@ public class UserController {
             return ResponseEntity.status(500).body(Map.of("message", "Lỗi hệ thống, vui lòng thử lại sau"));
         }
     }
+
 }

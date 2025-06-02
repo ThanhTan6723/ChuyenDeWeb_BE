@@ -7,9 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.example.chuyendeweb_be.user.dto.CreateUserDTO;
 import org.example.chuyendeweb_be.user.dto.UpdateUserDTO;
 import org.example.chuyendeweb_be.user.dto.UserDTO;
+import org.example.chuyendeweb_be.user.entity.ResetPassword;
 import org.example.chuyendeweb_be.user.entity.Role;
 import org.example.chuyendeweb_be.user.entity.User;
 import org.example.chuyendeweb_be.user.mapper.UserMapper;
+import org.example.chuyendeweb_be.user.repository.PasswordResetTokenRepository;
 import org.example.chuyendeweb_be.user.repository.RoleRepository;
 import org.example.chuyendeweb_be.user.repository.UserRepository;
 import org.slf4j.Logger;
@@ -18,16 +20,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
+    private final PasswordResetTokenRepository tokenRepository;
+    private final EmailService emailService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final Validator validator;
@@ -44,6 +50,7 @@ public class UserService {
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
+
     public UserDTO createUser(CreateUserDTO createUserDTO) {
         logger.info("Tạo người dùng mới: {}", createUserDTO.getUsername());
 
@@ -125,6 +132,56 @@ public class UserService {
         logger.info("Đã lưu thành công người dùng: {}", updatedUser.getUsername());
 
         return userMapper.toDto(updatedUser);
+    }
+
+    public void createPasswordResetToken(String email, String frontendUrl) throws Exception {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            throw new Exception("Không tìm thấy email.");
+        }
+
+        User user = userOpt.get();
+
+        // Tạo token mới
+        String token = UUID.randomUUID().toString();
+
+        ResetPassword passwordResetToken = new ResetPassword();
+        passwordResetToken.setToken(token);
+        passwordResetToken.setUser(user);
+        passwordResetToken.setExpiryDate(Instant.now().plus(15, ChronoUnit.MINUTES)); // Token hết hạn sau 15 phút
+
+        tokenRepository.save(passwordResetToken);
+
+        // Gửi email
+        String resetUrl = frontendUrl + "/reset-password?token=" + token;
+        emailService.sendSimpleMessage(
+                user.getEmail(),
+                "Đặt lại mật khẩu",
+                "Bạn nhận được email này để đặt lại mật khẩu. Vui lòng truy cập liên kết sau:\n" + resetUrl +
+                        "\nLiên kết sẽ hết hạn sau 15 phút."
+        );
+    }
+
+    public void resetPassword(String token, String newPassword) throws Exception {
+        Optional<ResetPassword> tokenOpt = tokenRepository.findByToken(token);
+        if (tokenOpt.isEmpty()) {
+            throw new Exception("Token không hợp lệ hoặc đã hết hạn.");
+        }
+
+        ResetPassword passwordResetToken = tokenOpt.get();
+
+        if (passwordResetToken.getExpiryDate().isBefore(Instant.now())) {
+            throw new Exception("Token đã hết hạn.");
+        }
+
+        User user = passwordResetToken.getUser();
+
+        // Mã hóa mật khẩu mới
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        // Xóa token sau khi đổi mật khẩu thành công
+        tokenRepository.delete(passwordResetToken);
     }
 
 }

@@ -20,13 +20,17 @@ public class OrderDetail {
     @JoinColumn(name = "order_id")
     private Order order;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="product_variant_id")
+    private ProductVariant variant;
+
     @Column(name = "product_price", precision = 10, scale = 3)
     private BigDecimal productPrice;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "priceWithQuantity", precision = 10, scale = 3)
+    @Column(name = "price_with_quantity", precision = 10, scale = 3)
     private BigDecimal priceWithQuantity;
 
 }
