@@ -17,9 +17,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-public class AdminProductController {
+public class ProductAdminController {
     private final ProductService productService;
-    private static final Logger logger = LoggerFactory.getLogger(AdminProductController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProductAdminController.class);
 
     @GetMapping("/products")
     public ResponseEntity<Map<String, Object>> getProductsForAdmin(

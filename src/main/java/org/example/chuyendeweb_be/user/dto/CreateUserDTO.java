@@ -17,7 +17,7 @@ public class CreateUserDTO {
     private String email;
 
     @NotBlank(message = "Mật khẩu không được để trống")
-    @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
+    @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
     private String password;
 
     @Pattern(regexp = "^[0-9]{0,15}$", message = "Số điện thoại không hợp lệ, tối đa 15 chữ số")

@@ -34,6 +34,12 @@ public class AuthService {
         if (userRepository.findByUsername(request.getUsername()).isPresent())
             throw new RuntimeException("Tên người dùng đã tồn tại");
 
+        if (userRepository.findByEmail(request.getEmail()).isPresent())
+            throw new RuntimeException("Email đã tồn tại");
+
+        if (userRepository.findByEmailOrPhone(null, request.getPhone()).isPresent())
+            throw new RuntimeException("Số điện thoại đã tồn tại");
+
         Role userRole = roleRepository.findByRoleName("ROLE_CLIENT")
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy vai trò mặc định"));
 
@@ -57,8 +63,6 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
             throw new BadCredentialsException("Mật khẩu không hợp lệ");
 
-        // Cập nhật token version
-//        user.setTokenVersion(jwtService.generateTokenVersion());
         userRepository.save(user);
 
         UserDetails userDetails = loadUserDetails(user);
@@ -86,8 +90,6 @@ public class AuthService {
             throw new BadCredentialsException("Refresh token đã hết hạn hoặc không hợp lệ");
         }
 
-        // Tạo token version mới cho refresh token rotation
-//        user.setTokenVersion(jwtService.generateTokenVersion());
         userRepository.save(user);
 
         return new AuthResponseDTO(

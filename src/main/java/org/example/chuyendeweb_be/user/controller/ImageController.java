@@ -9,10 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/images")
 @RequiredArgsConstructor
+@RequestMapping("/api/images")
 public class ImageController {
-
     private final CloudinaryService cloudinaryService;
 
     @PostMapping("/upload")

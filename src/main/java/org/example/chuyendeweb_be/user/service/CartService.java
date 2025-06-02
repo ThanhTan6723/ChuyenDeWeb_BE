@@ -34,7 +34,7 @@ public class CartService {
                     newCart.setUserId(userId);
                     return cartRepository.save(newCart);
                 });
-        return cartItemRepository.findByCartIdWithImages(cart.getId()); // Sử dụng phương thức mới
+        return cartItemRepository.findByCartIdWithImages(cart.getId());
     }
 
     @Transactional
@@ -72,7 +72,7 @@ public class CartService {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
 
-        // Clear existing items
+        // Clear existing items without replacing the collection
         cartItemRepository.deleteByCartId(cart.getId());
         cart.getCartItems().clear();
 
@@ -86,11 +86,11 @@ public class CartService {
                     cartItem.setCart(cart);
                     cartItem.setProductVariant(productVariant);
                     cartItem.setQuantity(dto.getQuantity());
+                    cart.getCartItems().add(cartItem);
                     return cartItem;
                 })
                 .collect(Collectors.toList());
 
-        cart.setCartItems(updatedItems);
         cartRepository.save(cart);
         return cartItemRepository.saveAll(updatedItems);
     }
@@ -130,5 +130,4 @@ public class CartService {
         cartItem.setQuantity(quantity);
         return cartItemRepository.save(cartItem);
     }
-
 }

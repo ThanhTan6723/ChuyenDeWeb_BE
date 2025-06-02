@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Connector;
 import org.example.chuyendeweb_be.user.security.JwtAuthenticationFilter;
 import org.example.chuyendeweb_be.user.security.OAuth2LoginSuccessHandler;
+import org.example.chuyendeweb_be.user.security.RestAccessDeniedHandler;
+import org.example.chuyendeweb_be.user.security.RestAuthenticationEntryPoint;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +29,8 @@ import java.util.List;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    private final RestAccessDeniedHandler restAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -36,17 +40,23 @@ public class SecurityConfig {
                 )
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(restAuthenticationEntryPoint)
+                        .accessDeniedHandler(restAccessDeniedHandler)
+                )
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/products/grid",
                                 "/api/products/**",
+                                "/api/orders/**",
+                                "/api/shipping/fee",
                                 "/api/images/**",
                                 "/api/auth/refresh-token",
                                 "/oauth2/**",
                                 "/api/auth/logout",
-                                "/api/auth/forgot-password",
-                                "/api/auth/reset-password",
+                                "/api/user/forgot-password",
+                                "/api/user/reset-password",
                                 "/api/user/update",
                                 "/api/admin/list",
                                 "/api/admin/users",

@@ -10,7 +10,7 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "password_reset_token")
-public class PasswordResetToken {
+public class ResetPassword {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
