@@ -3,6 +3,7 @@ package org.example.chuyendeweb_be.user.service;
 import lombok.RequiredArgsConstructor;
 import org.example.chuyendeweb_be.user.dto.OrderDTO;
 import org.example.chuyendeweb_be.user.dto.OrderDetailDTO;
+import org.example.chuyendeweb_be.user.dto.OrderDetailResponseDTO;
 import org.example.chuyendeweb_be.user.entity.*;
 import org.example.chuyendeweb_be.user.enums.OrderStatus;
 import org.example.chuyendeweb_be.user.repository.*;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -100,5 +102,39 @@ public class OrderService {
 
     public List<Order> getUserOrders(Long userId) {
         return orderRepository.findByUserId(userId);
+    }
+
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    public List<Order> getOrdersByStatus(OrderStatus status) {
+        return orderRepository.findByOrderStatus(status);
+    }
+
+    public List<OrderDetailResponseDTO> getOrderDetails(Long orderId) {
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
+        return orderDetails.stream()
+                .map(this::convertToOrderDetailResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    private OrderDetailResponseDTO convertToOrderDetailResponseDTO(OrderDetail detail) {
+        OrderDetailResponseDTO dto = new OrderDetailResponseDTO();
+        dto.setId(detail.getId());
+        dto.setVariantId(detail.getVariant().getId());
+        dto.setProductName(detail.getVariant().getProduct().getName());
+        dto.setVariantAttribute(detail.getVariant().getProductAttribute());
+        dto.setVariantName(detail.getVariant().getVariant());
+        dto.setQuantity(detail.getQuantity());
+        dto.setProductPrice(detail.getProductPrice());
+        dto.setPriceWithQuantity(detail.getPriceWithQuantity());
+
+        // Get the main image from the product variant
+        if (!detail.getVariant().getProductImageList().isEmpty()) {
+            dto.setMainImage(detail.getVariant().getProductImageList().get(0).getImage().getPublicId());
+        }
+
+        return dto;
     }
 }
