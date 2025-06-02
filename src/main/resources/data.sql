@@ -8,6 +8,12 @@ VALUES (3, 'ROLE_MANAGE_USER');
 INSERT INTO role (id, role_name)
 VALUES (4, 'ROLE_MANAGE_ORDER');
 
+-- Insert into payment --
+INSERT INTO payment(id,method_name) VALUES (1,'Thanh toán khi nhận hàng(COD)'),
+                                            (2,'VN Pay'),
+                                            (3,'PayPal'),
+                                            (4,'QR CODE');
+
 -- Insert vào bảng category
 INSERT
 INTO category (id, name)

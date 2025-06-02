@@ -2,6 +2,7 @@ package org.example.chuyendeweb_be.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.chuyendeweb_be.user.enums.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -19,5 +20,6 @@ public class OrderResponseDTO {
     private BigDecimal ship;
     private BigDecimal discountValue;
     private BigDecimal totalMoney;
-    private String orderStatus;
+    private OrderStatus orderStatus;
+    private String paymentMethod;
 }

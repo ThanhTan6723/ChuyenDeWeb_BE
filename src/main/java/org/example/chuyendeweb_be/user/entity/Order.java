@@ -3,6 +3,7 @@ package org.example.chuyendeweb_be.user.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.chuyendeweb_be.user.enums.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -44,10 +45,15 @@ public class Order {
     @Column(name = "address")
     private String address;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
     @Column(name = "order_notes")
     private String orderNotes;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "order_status")
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
 }

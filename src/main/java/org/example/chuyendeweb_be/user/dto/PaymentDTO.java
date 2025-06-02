@@ -1,5 +1,6 @@
 package org.example.chuyendeweb_be.user.dto;
 
+import jakarta.persistence.Column;
 import lombok.*;
 
 import java.io.Serializable;
@@ -9,6 +10,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentDTO implements Serializable {
-    Long id;
-    String mehthodName;
+    private Long id;
+    private String methodName;
 }
