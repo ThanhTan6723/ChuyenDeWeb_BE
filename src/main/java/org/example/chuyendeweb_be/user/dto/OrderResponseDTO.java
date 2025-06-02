@@ -11,6 +11,7 @@ import java.time.Instant;
 @Setter
 public class OrderResponseDTO {
     private Long id;
+    private UserDTO user;
     private Instant bookingDate;
     private Instant deliveryDate;
     private String consigneeName;
