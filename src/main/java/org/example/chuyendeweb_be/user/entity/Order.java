@@ -7,6 +7,7 @@ import org.example.chuyendeweb_be.user.enums.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -56,4 +57,9 @@ public class Order {
     @Column(name = "order_status")
     private OrderStatus orderStatus;
 
+    @Column(name = "vnp_txn_ref")
+    private Long vnpTxnRef;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderDetail> orderDetails;
 }

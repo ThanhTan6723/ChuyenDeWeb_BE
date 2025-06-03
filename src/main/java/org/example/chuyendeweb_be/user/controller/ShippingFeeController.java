@@ -1,8 +1,5 @@
 package org.example.chuyendeweb_be.user.controller;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.example.chuyendeweb_be.user.dto.ShippingFeeRequest;
 import org.json.JSONObject;
@@ -11,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 
 import java.net.URI;
 import java.net.http.HttpClient;
