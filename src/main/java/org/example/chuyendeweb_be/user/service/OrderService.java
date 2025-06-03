@@ -40,8 +40,14 @@ public class OrderService {
         if (cart.getCartItems().isEmpty()) {
             throw new IllegalArgumentException("Cart is empty");
         }
+
+        if (orderDTO.getOrderDetails() == null || orderDTO.getOrderDetails().isEmpty()) {
+            throw new IllegalArgumentException("Danh sách sản phẩm trong đơn hàng không được để trống");
+        }
+
         Payment payment = paymentRepository.findById(orderDTO.getPaymentId())
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy phương thức thanh toán"));
+
         // Create new order
         Order order = new Order();
         order.setUser(user);
@@ -58,29 +64,48 @@ public class OrderService {
         // Calculate total money and create order details
         BigDecimal totalMoney = BigDecimal.ZERO;
         List<OrderDetail> orderDetails = new ArrayList<>();
+        List<Long> cartItemIdsToDelete = new ArrayList<>();
+        List<Long> paidProductVariantIds = orderDTO.getOrderDetails().stream()
+                .map(OrderDetailDTO::getProductVariantId)
+                .collect(Collectors.toList());
 
-        for (CartItem cartItem : cart.getCartItems()) {
+        // Process cart items for the order
+        for (CartItem cartItem : new ArrayList<>(cart.getCartItems())) {
             ProductVariant variant = cartItem.getProductVariant();
 
-            // Check stock
-            if (variant.getQuantity() < cartItem.getQuantity()) {
-                throw new IllegalStateException("Insufficient stock for product variant: " + variant.getId());
+            // Only process items that match the product variant IDs in the order
+            if (paidProductVariantIds.contains(variant.getId())) {
+                // Find corresponding OrderDetailDTO for quantity
+                OrderDetailDTO orderDetailDTO = orderDTO.getOrderDetails().stream()
+                        .filter(dto -> dto.getProductVariantId().equals(variant.getId()))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thông tin sản phẩm trong đơn hàng cho variant: " + variant.getId()));
+
+                // Check stock
+                if (variant.getQuantity() < orderDetailDTO.getQuantity()) {
+                    throw new IllegalStateException("Insufficient stock for product variant: " + variant.getId());
+                }
+
+                // Create order detail
+                OrderDetail detail = new OrderDetail();
+                detail.setOrder(order);
+                detail.setVariant(variant);
+                detail.setQuantity(orderDetailDTO.getQuantity());
+                detail.setProductPrice(variant.getPrice());
+                detail.setPriceWithQuantity(variant.getPrice().multiply(BigDecimal.valueOf(orderDetailDTO.getQuantity())));
+
+                orderDetails.add(detail);
+                totalMoney = totalMoney.add(detail.getPriceWithQuantity());
+                cartItemIdsToDelete.add(cartItem.getId());
+
+                // Update product variant quantity
+                variant.setQuantity(variant.getQuantity() - orderDetailDTO.getQuantity());
+                productVariantRepository.save(variant);
             }
+        }
 
-            // Create order detail
-            OrderDetail detail = new OrderDetail();
-            detail.setOrder(order);
-            detail.setVariant(variant);
-            detail.setQuantity(cartItem.getQuantity());
-            detail.setProductPrice(variant.getPrice());
-            detail.setPriceWithQuantity(variant.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())));
-
-            orderDetails.add(detail);
-            totalMoney = totalMoney.add(detail.getPriceWithQuantity());
-
-            // Update product variant quantity
-            variant.setQuantity(variant.getQuantity() - cartItem.getQuantity());
-            productVariantRepository.save(variant);
+        if (orderDetails.isEmpty()) {
+            throw new IllegalArgumentException("Không có sản phẩm hợp lệ nào trong đơn hàng");
         }
 
         // Add shipping cost and apply discount
@@ -92,10 +117,12 @@ public class OrderService {
         orderDetails.forEach(detail -> detail.setOrder(savedOrder));
         orderDetailRepository.saveAll(orderDetails);
 
-        // Clear cart items properly
-        cartItemRepository.deleteByCartId(cart.getId());
-        cart.getCartItems().clear();
-        cartRepository.save(cart);
+        // Delete only the cart items that were included in the order
+        if (!cartItemIdsToDelete.isEmpty()) {
+            cartItemRepository.deleteAllById(cartItemIdsToDelete);
+            cart.getCartItems().removeIf(item -> cartItemIdsToDelete.contains(item.getId()));
+            cartRepository.save(cart);
+        }
 
         return savedOrder;
     }
