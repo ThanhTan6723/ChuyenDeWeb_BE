@@ -5,6 +5,8 @@ import org.example.chuyendeweb_be.user.dto.*;
 import org.example.chuyendeweb_be.user.entity.Order;
 import org.example.chuyendeweb_be.user.entity.User;
 import org.example.chuyendeweb_be.user.enums.OrderStatus;
+import org.example.chuyendeweb_be.user.repository.OrderDetailRepository;
+import org.example.chuyendeweb_be.user.repository.OrderRepository;
 import org.example.chuyendeweb_be.user.service.OrderService;
 import org.example.chuyendeweb_be.user.service.AuthService;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/orders")
 public class OrderController {
     private final OrderService orderService;
+    private final OrderRepository orderRepository;
     private final AuthService authService;
 
     @PostMapping
@@ -85,6 +88,36 @@ public class OrderController {
             return ResponseEntity.ok(createResponse(true, "Lấy chi tiết đơn hàng thành công", orderDetails));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(createResponse(false, "Lỗi khi lấy chi tiết đơn hàng: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/vnpay/{txnRef}")
+    public ResponseEntity<?> getOrderByVnpTxnRef(@PathVariable String txnRef) {
+        try {
+            Order order = orderRepository.findByVnpTxnRef(Long.parseLong(txnRef))
+                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn hàng với mã giao dịch: " + txnRef));
+
+            List<Map<String, Object>> selectedCartItems = order.getOrderDetails().stream()
+                    .map(detail -> {
+                        Map<String, Object> item = new HashMap<>();
+                        item.put("productVariantId", detail.getVariant().getId());
+                        item.put("quantity", detail.getQuantity());
+                        item.put("price", detail.getProductPrice());
+                        item.put("productName", detail.getVariant().getProduct().getName());
+                        item.put("attribute", detail.getVariant().getProductAttribute());
+                        item.put("variant", detail.getVariant().getVariant());
+                        return item;
+                    })
+                    .toList();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("order", convertToOrderResponseDTO(order));
+            data.put("orderDateTime", order.getBookingDate().toString());
+            data.put("selectedCartItems", selectedCartItems);
+
+            return ResponseEntity.ok(createResponse(true, "Lấy thông tin đơn hàng thành công", data));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(createResponse(false, e.getMessage()));
         }
     }
 
