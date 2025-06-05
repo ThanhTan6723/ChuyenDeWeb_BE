@@ -29,13 +29,13 @@ public class ProductService {
     private ProductRepository productRepository;
 
     public Page<Product> getAllProductsForGrid(int page, int size) {
-        logger.info("Fetching products for page: {}, size: {}", page, size);
+        logger.info("Lấy sản phẩm cho trang: {}, kích thước: {}", page, size);
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findAll(pageable);
     }
 
     public Page<Product> searchProducts(String keyword, int page, int size) {
-        logger.info("Searching products with keyword: {}, page: {}, size: {}", keyword, page, size);
+        logger.info("Tìm kiếm sản phẩm với từ khóa: {}, trang: {}, kích thước: {}", keyword, page, size);
         Pageable pageable = PageRequest.of(page, size);
         if (keyword == null || keyword.trim().isEmpty()) {
             return productRepository.findAll(pageable);
@@ -43,26 +43,50 @@ public class ProductService {
         return productRepository.findByNameContainingIgnoreCaseOrBrandNameContainingIgnoreCase(keyword, pageable);
     }
 
+    public Page<Product> getSortedProducts(String keyword, int page, int size, String sortBy, String sortOrder) {
+        logger.info("Lấy sản phẩm sắp xếp với từ khóa: {}, trang: {}, kích thước: {}, sắp xếp theo: {}, thứ tự: {}", keyword, page, size, sortBy, sortOrder);
+        Pageable pageable = PageRequest.of(page, size);
+
+        if (sortBy.equals("price")) {
+            if (keyword == null || keyword.trim().isEmpty()) {
+                return sortOrder.equalsIgnoreCase("asc")
+                        ? productRepository.findAllByPriceAsc(pageable)
+                        : productRepository.findAllByPriceDesc(pageable);
+            } else {
+                return sortOrder.equalsIgnoreCase("asc")
+                        ? productRepository.findByNameOrBrandByPriceAsc(keyword, pageable)
+                        : productRepository.findByNameOrBrandByPriceDesc(keyword, pageable);
+            }
+        } else {
+            Sort sort = Sort.by(sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+            pageable = PageRequest.of(page, size, sort);
+            if (keyword == null || keyword.trim().isEmpty()) {
+                return productRepository.findAll(pageable);
+            }
+            return productRepository.findByNameContainingIgnoreCaseOrBrandNameContainingIgnoreCase(keyword, pageable);
+        }
+    }
+
     public List<Product> getBestSellers(int size) {
-        logger.info("Fetching best sellers, size: {}", size);
+        logger.info("Lấy sản phẩm bán chạy, kích thước: {}", size);
         Pageable pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "salesCount"));
         return productRepository.findAll(pageable).getContent();
     }
 
     public ProductDetailDTO getProductDetails(Long id) {
-        logger.info("Fetching details for product ID: {}", id);
+        logger.info("Lấy chi tiết sản phẩm với ID: {}", id);
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với ID: " + id));
         return mapToDetailDTO(product);
     }
 
     private ProductDetailDTO mapToDetailDTO(Product product) {
         ProductDetailDTO dto = new ProductDetailDTO();
         dto.setId(product.getId());
-        dto.setName(product.getName() != null ? product.getName() : "Unknown");
+        dto.setName(product.getName() != null ? product.getName() : "Không xác định");
         dto.setDescription(product.getDescription() != null ? product.getDescription() : "");
-        dto.setBrand(product.getBrand() != null ? product.getBrand().getName() : "Unknown");
-        dto.setCategory(product.getCategory() != null ? product.getCategory().getName() : "Unknown");
+        dto.setBrand(product.getBrand() != null ? product.getBrand().getName() : "Không xác định");
+        dto.setCategory(product.getCategory() != null ? product.getCategory().getName() : "Không xác định");
 
         List<ProductVariantDTO> variants = product.getProductVariantList() != null
                 ? product.getProductVariantList().stream().map(variant -> {
@@ -70,7 +94,7 @@ public class ProductService {
             variantDTO.setId(variant.getId());
             variantDTO.setAttribute(variant.getProductAttribute() != null ? variant.getProductAttribute() : "N/A");
             variantDTO.setVariant(variant.getVariant() != null ? variant.getVariant() : "N/A");
-            variantDTO.setPrice(variant.getPrice() != null ? variant.getPrice(): new BigDecimal(0));
+            variantDTO.setPrice(variant.getPrice() != null ? variant.getPrice() : new BigDecimal(0));
             variantDTO.setQuantity(variant.getQuantity() != 0 ? variant.getQuantity() : 0);
 
             List<ImageDTO> images = variant.getProductImageList() != null
@@ -105,8 +129,8 @@ public class ProductService {
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
-        dto.setBrand(product.getBrand() != null ? product.getBrand().getName() : "Unknown");
-        dto.setCategory(product.getCategory() != null ? product.getCategory().getName() : "Unknown");
+        dto.setBrand(product.getBrand() != null ? product.getBrand().getName() : "Không xác định");
+        dto.setCategory(product.getCategory() != null ? product.getCategory().getName() : "Không xác định");
 
         if (!product.getProductVariantList().isEmpty()) {
             var variants = product.getProductVariantList();
@@ -114,7 +138,7 @@ public class ProductService {
                     .filter(v -> v.getProductImageList().stream().anyMatch(ProductImage::isMainImage))
                     .findFirst()
                     .orElseGet(() -> {
-                        logger.warn("No main image found for product ID: {}. Using first variant.", product.getId());
+                        logger.warn("Không tìm thấy ảnh chính cho sản phẩm ID: {}. Sử dụng biến thể đầu tiên.", product.getId());
                         return variants.get(0);
                     });
 
@@ -127,7 +151,7 @@ public class ProductService {
                     .findFirst()
                     .ifPresent(img -> dto.setMainImageUrl(img.getImage().getPublicId()));
         } else {
-            logger.warn("No variants found for product ID: {}", product.getId());
+            logger.warn("Không tìm thấy biến thể cho sản phẩm ID: {}", product.getId());
             dto.setStock(0);
             dto.setAttributes("N/A");
         }

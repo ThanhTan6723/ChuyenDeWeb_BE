@@ -25,7 +25,7 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size) {
         if (page < 0 || size <= 0) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Invalid page or size parameters"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Tham số trang hoặc kích thước không hợp lệ"));
         }
         Page<Product> productPage = productService.getAllProductsForGrid(page, size);
         List<ProductGridDTO> products = productService.mapToDTO(productPage);
@@ -43,9 +43,35 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size) {
         if (page < 0 || size <= 0) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Invalid page or size parameters"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Tham số trang hoặc kích thước không hợp lệ"));
         }
         Page<Product> productPage = productService.searchProducts(keyword, page, size);
+        List<ProductGridDTO> products = productService.mapToDTO(productPage);
+        Map<String, Object> response = new HashMap<>();
+        response.put("products", products);
+        response.put("totalPages", productPage.getTotalPages());
+        response.put("currentPage", productPage.getNumber());
+        response.put("totalItems", productPage.getTotalElements());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/sorted")
+    public ResponseEntity<Map<String, Object>> getSortedProducts(
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder) {
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Tham số trang hoặc kích thước không hợp lệ"));
+        }
+        if (!sortBy.equals("name") && !sortBy.equals("price")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Tham số sắp xếp không hợp lệ. Phải là 'name' hoặc 'price'"));
+        }
+        if (!sortOrder.equalsIgnoreCase("asc") && !sortOrder.equalsIgnoreCase("desc")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Tham số thứ tự không hợp lệ. Phải là 'asc' hoặc 'desc'"));
+        }
+        Page<Product> productPage = productService.getSortedProducts(keyword, page, size, sortBy, sortOrder);
         List<ProductGridDTO> products = productService.mapToDTO(productPage);
         Map<String, Object> response = new HashMap<>();
         response.put("products", products);
@@ -59,7 +85,7 @@ public class ProductController {
     public ResponseEntity<Map<String, Object>> getBestSellers(
             @RequestParam(defaultValue = "6") int size) {
         if (size <= 0) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Invalid size parameter"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Tham số kích thước không hợp lệ"));
         }
         List<Product> bestSellers = productService.getBestSellers(size);
         List<ProductGridDTO> products = productService.mapToDTO(bestSellers);
@@ -74,7 +100,7 @@ public class ProductController {
             ProductDetailDTO product = productService.getProductDetails(id);
             if (product == null) {
                 return ResponseEntity.status(404)
-                        .body(Map.of("error", "Product not found with ID: " + id));
+                        .body(Map.of("error", "Không tìm thấy sản phẩm với ID: " + id));
             }
             return ResponseEntity.ok(product);
         } catch (RuntimeException e) {
@@ -82,7 +108,7 @@ public class ProductController {
                     .body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                    .body(Map.of("error", "Internal server error: " + e.getMessage()));
+                    .body(Map.of("error", "Lỗi server nội bộ: " + e.getMessage()));
         }
     }
 }
