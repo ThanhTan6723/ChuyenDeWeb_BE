@@ -19,7 +19,7 @@ INSERT
 INTO category (id, name)
 VALUES (1, 'Tẩy trang'),
        (2, 'Toner'),
-       (3, 'Sửa rữa mặt'),
+       (3, 'Sữa rửa mặt'),
        (4, 'Kem chống nắng'),
        (5, 'Bông tẩy trang'),
        (6, 'Kem dưỡng'),
