@@ -5,7 +5,6 @@ import org.example.chuyendeweb_be.user.dto.ProductGridDTO;
 import org.example.chuyendeweb_be.user.dto.ProductDetailDTO;
 import org.example.chuyendeweb_be.user.entity.Product;
 import org.example.chuyendeweb_be.user.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +28,24 @@ public class ProductController {
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid page or size parameters"));
         }
         Page<Product> productPage = productService.getAllProductsForGrid(page, size);
+        List<ProductGridDTO> products = productService.mapToDTO(productPage);
+        Map<String, Object> response = new HashMap<>();
+        response.put("products", products);
+        response.put("totalPages", productPage.getTotalPages());
+        response.put("currentPage", productPage.getNumber());
+        response.put("totalItems", productPage.getTotalElements());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> searchProducts(
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size) {
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid page or size parameters"));
+        }
+        Page<Product> productPage = productService.searchProducts(keyword, page, size);
         List<ProductGridDTO> products = productService.mapToDTO(productPage);
         Map<String, Object> response = new HashMap<>();
         response.put("products", products);
