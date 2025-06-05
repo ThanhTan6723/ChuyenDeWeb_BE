@@ -67,6 +67,23 @@ public class ProductService {
         }
     }
 
+    public Page<Product> getFilteredProducts(String keyword, String category, String brand, int page, int size, String sortBy, String sortOrder) {
+        logger.info("Lọc sản phẩm với từ khóa: {}, danh mục: {}, thương hiệu: {}, trang: {}, kích thước: {}, sắp xếp theo: {}, thứ tự: {}",
+                keyword, category, brand, page, size, sortBy, sortOrder);
+        Pageable pageable;
+
+        if (sortBy.equals("price")) {
+            pageable = PageRequest.of(page, size);
+            return sortOrder.equalsIgnoreCase("asc")
+                    ? productRepository.findByFiltersPriceAsc(keyword, category, brand, pageable)
+                    : productRepository.findByFiltersPriceDesc(keyword, category, brand, pageable);
+        } else {
+            Sort sort = Sort.by(sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+            pageable = PageRequest.of(page, size, sort);
+            return productRepository.findByFilters(keyword, category, brand, pageable);
+        }
+    }
+
     public List<Product> getBestSellers(int size) {
         logger.info("Lấy sản phẩm bán chạy, kích thước: {}", size);
         Pageable pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "salesCount"));
@@ -144,7 +161,7 @@ public class ProductService {
 
             dto.setPrice(mainVariant.getPrice());
             dto.setStock(mainVariant.getQuantity());
-            dto.setAttributes(mainVariant.getProductAttribute() + " - " + mainVariant.getVariant());
+            dto.setAttributes(mainVariant.getProductAttribute() != null ? mainVariant.getProductAttribute() + " - " + mainVariant.getVariant() : "N/A");
 
             mainVariant.getProductImageList().stream()
                     .filter(ProductImage::isMainImage)
