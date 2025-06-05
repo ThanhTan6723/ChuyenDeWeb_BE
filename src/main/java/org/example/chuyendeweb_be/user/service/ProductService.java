@@ -34,6 +34,15 @@ public class ProductService {
         return productRepository.findAll(pageable);
     }
 
+    public Page<Product> searchProducts(String keyword, int page, int size) {
+        logger.info("Searching products with keyword: {}, page: {}, size: {}", keyword, page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return productRepository.findAll(pageable);
+        }
+        return productRepository.findByNameContainingIgnoreCaseOrBrandNameContainingIgnoreCase(keyword, pageable);
+    }
+
     public List<Product> getBestSellers(int size) {
         logger.info("Fetching best sellers, size: {}", size);
         Pageable pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "salesCount"));
@@ -124,6 +133,4 @@ public class ProductService {
         }
         return dto;
     }
-
-
 }
