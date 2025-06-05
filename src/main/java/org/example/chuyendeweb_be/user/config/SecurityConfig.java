@@ -51,6 +51,7 @@ public class SecurityConfig {
                                 "/api/products/**",
                                 "/api/products/search",
                                 "/api/products/sorted",
+                                "/api/products/filter",
                                 "/api/orders/**",
                                 "/api/orders/all",
                                 "/api/orders/status/",

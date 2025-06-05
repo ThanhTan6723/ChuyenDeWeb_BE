@@ -81,6 +81,36 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<Map<String, Object>> getFilteredProducts(
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "") String category,
+            @RequestParam(defaultValue = "") String brand,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder) {
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Tham số trang hoặc kích thước không hợp lệ"));
+        }
+        if (!sortBy.equals("name") && !sortBy.equals("price")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Tham số sắp xếp không hợp lệ. Phải là 'name' hoặc 'price'"));
+        }
+        if (!sortOrder.equalsIgnoreCase("asc") && !sortOrder.equalsIgnoreCase("desc")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Tham số thứ tự không hợp lệ. Phải là 'asc' hoặc 'desc'"));
+        }
+        String categoryParam = category.isBlank() ? null : category;
+        String brandParam = brand.isBlank() ? null : brand;
+        Page<Product> productPage = productService.getFilteredProducts(keyword, categoryParam, brandParam, page, size, sortBy, sortOrder);
+        List<ProductGridDTO> products = productService.mapToDTO(productPage);
+        Map<String, Object> response = new HashMap<>();
+        response.put("products", products);
+        response.put("totalPages", productPage.getTotalPages());
+        response.put("currentPage", productPage.getNumber());
+        response.put("totalItems", productPage.getTotalElements());
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/bestsellers")
     public ResponseEntity<Map<String, Object>> getBestSellers(
             @RequestParam(defaultValue = "6") int size) {
