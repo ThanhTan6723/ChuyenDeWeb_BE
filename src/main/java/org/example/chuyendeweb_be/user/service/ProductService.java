@@ -86,8 +86,8 @@ public class ProductService {
 
     public List<Product> getBestSellers(int size) {
         logger.info("Lấy sản phẩm bán chạy, kích thước: {}", size);
-        Pageable pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "salesCount"));
-        return productRepository.findAll(pageable).getContent();
+        Pageable pageable = PageRequest.of(0, size);
+        return productRepository.findBestSellers(pageable);
     }
 
     public ProductDetailDTO getProductDetails(Long id) {
