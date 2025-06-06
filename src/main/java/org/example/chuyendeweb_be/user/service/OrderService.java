@@ -7,6 +7,8 @@ import org.example.chuyendeweb_be.user.dto.OrderDetailResponseDTO;
 import org.example.chuyendeweb_be.user.entity.*;
 import org.example.chuyendeweb_be.user.enums.OrderStatus;
 import org.example.chuyendeweb_be.user.repository.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -127,16 +129,16 @@ public class OrderService {
         return savedOrder;
     }
 
-    public List<Order> getUserOrders(Long userId) {
-        return orderRepository.findByUserId(userId);
+    public Page<Order> getUserOrders(Long userId, Pageable pageable) {
+        return orderRepository.findByUserId(userId, pageable);
     }
 
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public Page<Order> getAllOrders(Pageable pageable) {
+        return orderRepository.findAll(pageable);
     }
 
-    public List<Order> getOrdersByStatus(OrderStatus status) {
-        return orderRepository.findByOrderStatus(status);
+    public Page<Order> getOrdersByStatus(OrderStatus status, Pageable pageable) {
+        return orderRepository.findByOrderStatus(status, pageable);
     }
 
     public List<OrderDetailResponseDTO> getOrderDetails(Long orderId) {
