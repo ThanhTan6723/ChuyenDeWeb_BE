@@ -5,10 +5,12 @@ import org.example.chuyendeweb_be.user.dto.*;
 import org.example.chuyendeweb_be.user.entity.Order;
 import org.example.chuyendeweb_be.user.entity.User;
 import org.example.chuyendeweb_be.user.enums.OrderStatus;
-import org.example.chuyendeweb_be.user.repository.OrderDetailRepository;
 import org.example.chuyendeweb_be.user.repository.OrderRepository;
 import org.example.chuyendeweb_be.user.service.OrderService;
 import org.example.chuyendeweb_be.user.service.AuthService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,40 +44,58 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getUserOrders() {
+    public ResponseEntity<?> getUserOrders(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Long userId = authService.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(401).body(createResponse(false, "Người dùng chưa được xác thực"));
         }
 
-        List<Order> orders = orderService.getUserOrders(userId);
-        List<OrderResponseDTO> responseDTOs = orders.stream()
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Order> orderPage = orderService.getUserOrders(userId, pageable);
+        List<OrderResponseDTO> responseDTOs = orderPage.getContent().stream()
                 .map(this::convertToOrderResponseDTO)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(createResponse(true, "Lấy danh sách đơn hàng thành công", responseDTOs));
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", responseDTOs);
+        response.put("totalPages", orderPage.getTotalPages());
+        response.put("currentPage", orderPage.getNumber());
+        response.put("totalItems", orderPage.getTotalElements());
+        return ResponseEntity.ok(createResponse(true, "Lấy danh sách đơn hàng thành công", response));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllOrders() {
+    public ResponseEntity<?> getAllOrders(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         try {
-            List<Order> orders = orderService.getAllOrders();
-            List<OrderResponseDTO> responseDTOs = orders.stream()
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Order> orderPage = orderService.getAllOrders(pageable);
+            List<OrderResponseDTO> responseDTOs = orderPage.getContent().stream()
                     .map(this::convertToOrderResponseDTO)
                     .collect(Collectors.toList());
-            return ResponseEntity.ok(createResponse(true, "Lấy danh sách đơn hàng thành công", responseDTOs));
+            Map<String, Object> response = new HashMap<>();
+            response.put("content", responseDTOs);
+            response.put("totalPages", orderPage.getTotalPages());
+            response.put("currentPage", orderPage.getNumber());
+            response.put("totalItems", orderPage.getTotalElements());
+            return ResponseEntity.ok(createResponse(true, "Lấy danh sách đơn hàng thành công", response));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(createResponse(false, "Lỗi khi lấy danh sách đơn hàng: " + e.getMessage()));
         }
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<?> getOrdersByStatus(@PathVariable OrderStatus status) {
+    public ResponseEntity<?> getOrdersByStatus(@PathVariable OrderStatus status, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         try {
-            List<Order> orders = orderService.getOrdersByStatus(status);
-            List<OrderResponseDTO> responseDTOs = orders.stream()
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Order> orderPage = orderService.getOrdersByStatus(status, pageable);
+            List<OrderResponseDTO> responseDTOs = orderPage.getContent().stream()
                     .map(this::convertToOrderResponseDTO)
                     .collect(Collectors.toList());
-            return ResponseEntity.ok(createResponse(true, "Lấy danh sách đơn hàng thành công", responseDTOs));
+            Map<String, Object> response = new HashMap<>();
+            response.put("content", responseDTOs);
+            response.put("totalPages", orderPage.getTotalPages());
+            response.put("currentPage", orderPage.getNumber());
+            response.put("totalItems", orderPage.getTotalElements());
+            return ResponseEntity.ok(createResponse(true, "Lấy danh sách đơn hàng thành công", response));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(createResponse(false, "Lỗi khi lấy danh sách đơn hàng: " + e.getMessage()));
         }
@@ -124,7 +144,7 @@ public class OrderController {
     private OrderResponseDTO convertToOrderResponseDTO(Order order) {
         OrderResponseDTO dto = new OrderResponseDTO();
         dto.setId(order.getId());
-        dto.setUser(convertToUserDTO(order.getUser())); // Chuyển đổi User thành UserDTO
+        dto.setUser(convertToUserDTO(order.getUser()));
         dto.setBookingDate(order.getBookingDate());
         dto.setDeliveryDate(order.getDeliveryDate());
         dto.setConsigneeName(order.getConsigneeName());
@@ -148,7 +168,6 @@ public class OrderController {
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setPhone(user.getPhone());
-        // RoleDTO cần được chuyển đổi nếu có, giả sử RoleDTO có constructor hoặc getter/setter tương ứng
         if (user.getRole() != null) {
             RoleDTO roleDTO = new RoleDTO();
             roleDTO.setId(user.getRole().getId());
