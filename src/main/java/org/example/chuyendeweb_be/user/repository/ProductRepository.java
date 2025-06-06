@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE (:keyword IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(p.brand.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
@@ -40,4 +42,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p JOIN p.productVariantList pv LEFT JOIN pv.productImageList pi WHERE (LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(p.brand.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND (pi.mainImage = true OR pi IS NULL) ORDER BY pv.price DESC")
     Page<Product> findByNameOrBrandByPriceDesc(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT p FROM Product p JOIN p.productVariantList pv LEFT JOIN pv.productImageList pi LEFT JOIN OrderDetail od ON pv.id = od.variant.id " +
+            "WHERE pi.mainImage = true OR pi IS NULL " +
+            "GROUP BY p.id, p.name, p.description, p.brand, p.category, p.viewCount " +
+            "ORDER BY COALESCE(SUM(od.quantity), 0) DESC")
+    List<Product> findBestSellers(Pageable pageable);
 }
