@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "discounttype")
-public class Discounttype {
+public class DiscountType {
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
