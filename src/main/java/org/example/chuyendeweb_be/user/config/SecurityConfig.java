@@ -71,7 +71,13 @@ public class SecurityConfig {
                                 "/api/user/update",
                                 "/api/admin/list",
                                 "/api/admin/users",
-                                "/api/admin/products"
+                                "/api/admin/products",
+                                "/api/vouchers/**",
+                                "/api/vouchers",
+                                "/api/categories",
+                                "/api/product-variants",
+                                "/api/e-vouchers/**",
+                                "/api/e-vouchers"
                         ).permitAll()
                         .requestMatchers("/api/cart/**").authenticated()
                         .anyRequest().authenticated()
