@@ -8,6 +8,9 @@ VALUES (3, 'ROLE_MANAGE_USER');
 INSERT INTO role (id, role_name)
 VALUES (4, 'ROLE_MANAGE_ORDER');
 
+-- Insert Into DiscountType --
+Insert into DiscountType(id, type) values (1,'All'),(2,'Category'),(3,'Product');
+
 -- Insert into payment --
 INSERT INTO payment(id,method_name) VALUES (1,'Thanh toán khi nhận hàng(COD)'),
                                             (2,'VN Pay'),
