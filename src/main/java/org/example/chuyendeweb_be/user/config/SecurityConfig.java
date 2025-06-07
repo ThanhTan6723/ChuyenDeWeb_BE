@@ -75,7 +75,9 @@ public class SecurityConfig {
                                 "/api/vouchers/**",
                                 "/api/vouchers",
                                 "/api/categories",
-                                "/api/product-variants"
+                                "/api/product-variants",
+                                "/api/e-vouchers/**",
+                                "/api/e-vouchers"
                         ).permitAll()
                         .requestMatchers("/api/cart/**").authenticated()
                         .anyRequest().authenticated()
