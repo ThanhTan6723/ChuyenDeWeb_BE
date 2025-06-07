@@ -3,6 +3,7 @@ package org.example.chuyendeweb_be.user.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.chuyendeweb_be.user.dto.ProductVariantDTO;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
@@ -23,14 +24,14 @@ public class Voucher {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "discount_type", nullable = false)
-    private Discounttype discountType;
+    private DiscountType discountType;
 
     @Column(name = "discount_percentage", nullable = false, precision = 5, scale = 2)
     private BigDecimal discountPercentage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @JoinColumn(name = "product_variant_id")
+    private ProductVariant productVariant;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
