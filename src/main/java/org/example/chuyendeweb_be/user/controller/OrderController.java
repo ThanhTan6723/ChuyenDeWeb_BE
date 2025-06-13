@@ -11,6 +11,7 @@ import org.example.chuyendeweb_be.user.service.AuthService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,6 @@ public class OrderController {
         if (userId == null) {
             return ResponseEntity.status(401).body(createResponse(false, "Người dùng chưa được xác thực"));
         }
-
         try {
             Order order = orderService.createOrder(userId, orderDTO);
             OrderResponseDTO responseDTO = convertToOrderResponseDTO(order);
@@ -49,8 +49,7 @@ public class OrderController {
         if (userId == null) {
             return ResponseEntity.status(401).body(createResponse(false, "Người dùng chưa được xác thực"));
         }
-
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("bookingDate").descending());
         Page<Order> orderPage = orderService.getUserOrders(userId, pageable);
         List<OrderResponseDTO> responseDTOs = orderPage.getContent().stream()
                 .map(this::convertToOrderResponseDTO)
@@ -66,7 +65,7 @@ public class OrderController {
     @GetMapping("/all")
     public ResponseEntity<?> getAllOrders(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         try {
-            Pageable pageable = PageRequest.of(page, size);
+            Pageable pageable = PageRequest.of(page, size, Sort.by("bookingDate").descending());
             Page<Order> orderPage = orderService.getAllOrders(pageable);
             List<OrderResponseDTO> responseDTOs = orderPage.getContent().stream()
                     .map(this::convertToOrderResponseDTO)
@@ -83,10 +82,14 @@ public class OrderController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<?> getOrdersByStatus(@PathVariable OrderStatus status, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    public ResponseEntity<?> getUserOrdersByStatus(@PathVariable OrderStatus status, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        Long userId = authService.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(401).body(createResponse(false, "Người dùng chưa được xác thực"));
+        }
         try {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<Order> orderPage = orderService.getOrdersByStatus(status, pageable);
+            Pageable pageable = PageRequest.of(page, size, Sort.by("bookingDate").descending());
+            Page<Order> orderPage = orderService.getUserOrdersByStatus(userId, status, pageable);
             List<OrderResponseDTO> responseDTOs = orderPage.getContent().stream()
                     .map(this::convertToOrderResponseDTO)
                     .collect(Collectors.toList());
@@ -98,6 +101,20 @@ public class OrderController {
             return ResponseEntity.ok(createResponse(true, "Lấy danh sách đơn hàng thành công", response));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(createResponse(false, "Lỗi khi lấy danh sách đơn hàng: " + e.getMessage()));
+        }
+    }
+
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable Long orderId, @RequestBody Map<String, String> request) {
+        try {
+            String newStatus = request.get("status");
+            Order order = orderRepository.findById(orderId)
+                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn hàng"));
+            order.setOrderStatus(OrderStatus.valueOf(newStatus));
+            orderRepository.save(order);
+            return ResponseEntity.ok(createResponse(true, "Cập nhật trạng thái đơn hàng thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(createResponse(false, "Lỗi khi cập nhật trạng thái: " + e.getMessage()));
         }
     }
 
@@ -116,7 +133,6 @@ public class OrderController {
         try {
             Order order = orderRepository.findByVnpTxnRef(Long.parseLong(txnRef))
                     .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn hàng với mã giao dịch: " + txnRef));
-
             List<Map<String, Object>> selectedCartItems = order.getOrderDetails().stream()
                     .map(detail -> {
                         Map<String, Object> item = new HashMap<>();
@@ -129,12 +145,10 @@ public class OrderController {
                         return item;
                     })
                     .toList();
-
             Map<String, Object> data = new HashMap<>();
             data.put("order", convertToOrderResponseDTO(order));
             data.put("orderDateTime", order.getBookingDate().toString());
             data.put("selectedCartItems", selectedCartItems);
-
             return ResponseEntity.ok(createResponse(true, "Lấy thông tin đơn hàng thành công", data));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(createResponse(false, e.getMessage()));
