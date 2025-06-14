@@ -20,6 +20,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -46,7 +49,9 @@ public class AuthService {
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(userRole);
-        user.setTokenVersion(jwtService.generateTokenVersion()); // Tạo token version
+        user.setTokenVersion(jwtService.generateTokenVersion());
+        user.setFailed(0); // Khởi tạo giá trị mặc định
+        user.setLocked(false); // Khởi tạo giá trị mặc định
         userRepository.save(user);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
@@ -60,9 +65,38 @@ public class AuthService {
         User user = userRepository.findByEmailOrPhone(request.getEmail(), request.getPhone())
                 .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy email hoặc số điện thoại"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
-            throw new BadCredentialsException("Mật khẩu không hợp lệ");
+        // Khởi tạo giá trị mặc định nếu null
+        if (user.getFailed() == null) user.setFailed(0);
+        if (user.getLocked() == null) user.setLocked(false);
 
+        // Kiểm tra trạng thái khóa
+        if (user.getLocked()) {
+            if (user.getLockTime() != null && Instant.now().isBefore(user.getLockTime().plus(15, ChronoUnit.MINUTES))) {
+                throw new RuntimeException("Tài khoản đã bị khóa. Vui lòng thử lại sau 15 phút.");
+            } else {
+                // Mở khóa tài khoản nếu đã qua 15 phút
+                user.setLocked(false);
+                user.setFailed(0);
+                user.setLockTime(null);
+                userRepository.save(user);
+            }
+        }
+
+        // Kiểm tra mật khẩu
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            user.setFailed(user.getFailed() + 1);
+            if (user.getFailed() >= 5) {
+                user.setLocked(true);
+                user.setLockTime(Instant.now());
+                userRepository.save(user);
+                throw new RuntimeException("Tài khoản đã bị khóa. Vui lòng thử lại sau 15 phút.");
+            }
+            userRepository.save(user);
+            throw new BadCredentialsException("Mật khẩu không hợp lệ. Lần thử: " + user.getFailed() + "/5");
+        }
+
+        // Đặt lại số lần thất bại khi đăng nhập thành công
+        user.setFailed(0);
         userRepository.save(user);
 
         UserDetails userDetails = loadUserDetails(user);

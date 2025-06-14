@@ -33,7 +33,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request) {
-        // Gom các lỗi lại thành 1 danh sách
         Map<String, String> errors = new java.util.HashMap<>();
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             errors.put("username", "Tên người dùng đã tồn tại");
@@ -78,17 +77,36 @@ public class AuthController {
                             "message", "Đăng nhập thành công",
                             "accessToken", authResponse.getAccessToken(),
                             "refreshToken", authResponse.getRefreshToken(),
+                            "success", true,
                             "user", Map.of(
                                     "id", user.getId(),
                                     "username", user.getUsername(),
                                     "email", user.getEmail(),
-                                    "phone",user.getPhone()
+                                    "phone", user.getPhone(),
+                                    "failedAttempts", user.getFailed() != null ? user.getFailed() : 0,
+                                    "locked", user.getLocked() != null ? user.getLocked() : false
                             )
+                    ));
+        } catch (RuntimeException e) {
+            logger.error("Lỗi đăng nhập: {}", e.getMessage());
+            User user = userRepository.findByEmailOrPhone(request.getEmail(), request.getPhone())
+                    .orElse(null);
+            return ResponseEntity.badRequest()
+                    .body(Map.of(
+                            "error", e.getMessage(),
+                            "success", false,
+                            "failedAttempts", user != null && user.getFailed() != null ? user.getFailed() : 0,
+                            "locked", user != null && user.getLocked() != null ? user.getLocked() : false
                     ));
         } catch (Exception e) {
             logger.error("Lỗi đăng nhập: {}", e.getMessage());
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", e.getMessage()));
+                    .body(Map.of(
+                            "error", e.getMessage(),
+                            "success", false,
+                            "failedAttempts", 0,
+                            "locked", false
+                    ));
         }
     }
 
@@ -110,7 +128,9 @@ public class AuthController {
                                     "id", user.getId(),
                                     "username", user.getUsername(),
                                     "email", user.getEmail(),
-                                    "phone",user.getPhone()
+                                    "phone", user.getPhone(),
+                                    "failedAttempts", user.getFailed() != null ? user.getFailed() : 0,
+                                    "locked", user.getLocked() != null ? user.getLocked() : false
                             )
                     ));
         } catch (Exception e) {
