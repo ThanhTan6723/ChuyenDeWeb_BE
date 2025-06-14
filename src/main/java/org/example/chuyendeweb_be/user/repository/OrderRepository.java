@@ -30,4 +30,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o FROM Order o WHERE o.user.id = :userId AND o.orderStatus = :status ORDER BY o.bookingDate DESC")
     Page<Order> findByUserIdAndOrderStatus(Long userId, OrderStatus status, Pageable pageable);
+
+
 }
