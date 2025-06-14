@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(
                                 "/api/auth/**",
+                                "/api/cart/**",
                                 "/api/products/grid",
                                 "/api/products/**",
                                 "/api/products/search",
@@ -79,7 +80,7 @@ public class SecurityConfig {
                                 "/api/e-vouchers/**",
                                 "/api/e-vouchers"
                         ).permitAll()
-                        .requestMatchers("/api/cart/**").authenticated()
+//                        .requestMatchers("/api/cart/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
