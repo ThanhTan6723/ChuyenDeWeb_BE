@@ -38,7 +38,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         final String requestPath = request.getServletPath();
-        if (requestPath.startsWith("/api/auth") || requestPath.startsWith("/oauth2")||requestPath.startsWith("/api/products")||requestPath.startsWith("/api/shipping/")||requestPath.startsWith("/api/voucher")) {
+        // Các endpoint public được phép truy cập không cần xác thực
+        if (requestPath.startsWith("/api/auth")
+                || requestPath.startsWith("/oauth2")
+                || requestPath.startsWith("/api/products")
+                || requestPath.startsWith("/api/shipping")
+                || requestPath.startsWith("/api/voucher")
+                || requestPath.startsWith("/api/categories")
+                || requestPath.startsWith("/api/images")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -67,16 +74,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (jwtService.isTokenValid(accessToken, userDetails, user.getTokenVersion())) {
                 setAuthentication(request, userDetails);
             } else if (refreshToken != null && jwtService.isRefreshTokenValid(refreshToken, userDetails, user.getTokenVersion())) {
-                // Tạo token mới và xoay refresh token
+                // Tạo token mới và refresh token mới
                 String newTokenVersion = jwtService.generateTokenVersion();
                 String newAccessToken = jwtService.generateToken(userDetails, newTokenVersion);
                 String newRefreshToken = jwtService.generateRefreshToken(userDetails, newTokenVersion);
 
-                // Cập nhật token version trong DB
+                // Cập nhật token version mới vào DB
                 user.setTokenVersion(newTokenVersion);
                 userRepository.save(user);
 
-                // Đặt cookie mới
+                // Set cookie mới cho client
                 response.addHeader("Set-Cookie", createAccessTokenCookie(newAccessToken).toString());
                 response.addHeader("Set-Cookie", createRefreshTokenCookie(newRefreshToken).toString());
 
@@ -132,7 +139,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .secure(true)
                 .sameSite("Strict")
                 .path("/")
-                .maxAge(7 * 24 * 60 * 60) // 7 ngày
+                .maxAge(7 * 24 * 60 * 60)
                 .build();
     }
 }

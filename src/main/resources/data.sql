@@ -8,6 +8,7 @@ VALUES (3, 'ROLE_MANAGE_USER');
 INSERT INTO role (id, role_name)
 VALUES (4, 'ROLE_MANAGE_ORDER');
 
+UPDATE user set role_id = 2 where id =1;
 -- Insert Into DiscountType --
 Insert into DiscountType(id, type) values (1,'All'),(2,'Category'),(3,'Product');
 

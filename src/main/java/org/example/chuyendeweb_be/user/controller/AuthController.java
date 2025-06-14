@@ -71,6 +71,9 @@ public class AuthController {
             User user = userRepository.findByEmailOrPhone(request.getEmail(), request.getPhone())
                     .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng"));
 
+            // Lấy tên role
+            String roleName = user.getRole() != null ? user.getRole().getRoleName() : "";
+
             return ResponseEntity.ok()
                     .headers(createAuthCookies(authResponse))
                     .body(Map.of(
@@ -84,7 +87,8 @@ public class AuthController {
                                     "email", user.getEmail(),
                                     "phone", user.getPhone(),
                                     "failedAttempts", user.getFailed() != null ? user.getFailed() : 0,
-                                    "locked", user.getLocked() != null ? user.getLocked() : false
+                                    "locked", user.getLocked() != null ? user.getLocked() : false,
+                                    "roleName", roleName   // Trả về role cho FE biết
                             )
                     ));
         } catch (RuntimeException e) {
@@ -118,6 +122,9 @@ public class AuthController {
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng: " + username));
 
+            // Lấy tên role
+            String roleName = user.getRole() != null ? user.getRole().getRoleName() : "";
+
             return ResponseEntity.ok()
                     .headers(createAuthCookies(authResponse))
                     .body(Map.of(
@@ -130,7 +137,8 @@ public class AuthController {
                                     "email", user.getEmail(),
                                     "phone", user.getPhone(),
                                     "failedAttempts", user.getFailed() != null ? user.getFailed() : 0,
-                                    "locked", user.getLocked() != null ? user.getLocked() : false
+                                    "locked", user.getLocked() != null ? user.getLocked() : false,
+                                    "roleName", roleName
                             )
                     ));
         } catch (Exception e) {
