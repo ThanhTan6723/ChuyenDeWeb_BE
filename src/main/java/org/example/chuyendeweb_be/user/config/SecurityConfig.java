@@ -74,7 +74,8 @@ public class SecurityConfig {
                                 "/api/categories",
                                 "/api/product-variants",
                                 "/api/e-vouchers/**",
-                                "/api/e-vouchers"
+                                "/api/e-vouchers",
+                                "/api/wishlist/**"
                         ).permitAll()
                         // Chỉ admin mới truy cập được các endpoint admin
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
