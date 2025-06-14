@@ -141,6 +141,10 @@ public class OrderService {
         return orderRepository.findByOrderStatus(status, pageable);
     }
 
+    public Page<Order> getUserOrdersByStatus(Long userId, OrderStatus status, Pageable pageable) {
+        return orderRepository.findByUserIdAndOrderStatus(userId, status, pageable);
+    }
+
     public List<OrderDetailResponseDTO> getOrderDetails(Long orderId) {
         List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
         return orderDetails.stream()

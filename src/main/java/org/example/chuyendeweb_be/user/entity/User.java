@@ -17,6 +17,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "username", nullable = false, length = 32)
     private String username;
 
@@ -34,12 +35,12 @@ public class User {
     private Role role;
 
     @ColumnDefault("0")
-    @Column(name = "failed")
-    private Integer failed;
+    @Column(name = "failed", nullable = false)
+    private Integer failed = 0; // Khởi tạo giá trị mặc định trong code
 
-    @ColumnDefault("0")
-    @Column(name = "locked")
-    private Boolean locked;
+    @ColumnDefault("false")
+    @Column(name = "locked", nullable = false)
+    private Boolean locked = false; // Khởi tạo giá trị mặc định trong code
 
     @Column(name = "lock_time")
     private Instant lockTime;
