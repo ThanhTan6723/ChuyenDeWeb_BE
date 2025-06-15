@@ -50,8 +50,8 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(userRole);
         user.setTokenVersion(jwtService.generateTokenVersion());
-        user.setFailed(0); // Khởi tạo giá trị mặc định
-        user.setLocked(false); // Khởi tạo giá trị mặc định
+        user.setFailed(0);
+        user.setLocked(false);
         userRepository.save(user);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
@@ -62,19 +62,20 @@ public class AuthService {
     }
 
     public AuthResponseDTO login(LoginRequestDTO request) {
+        if (request.getEmail() == null && request.getPhone() == null){
+            throw new BadCredentialsException("Vui lòng cung cấp chính xác một trong hai: email hoặc số điện thoại");
+        }
+
         User user = userRepository.findByEmailOrPhone(request.getEmail(), request.getPhone())
                 .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy email hoặc số điện thoại"));
 
-        // Khởi tạo giá trị mặc định nếu null
         if (user.getFailed() == null) user.setFailed(0);
         if (user.getLocked() == null) user.setLocked(false);
 
-        // Kiểm tra trạng thái khóa
         if (user.getLocked()) {
             if (user.getLockTime() != null && Instant.now().isBefore(user.getLockTime().plus(15, ChronoUnit.MINUTES))) {
                 throw new RuntimeException("Tài khoản đã bị khóa. Vui lòng thử lại sau 15 phút.");
             } else {
-                // Mở khóa tài khoản nếu đã qua 15 phút
                 user.setLocked(false);
                 user.setFailed(0);
                 user.setLockTime(null);
@@ -82,7 +83,6 @@ public class AuthService {
             }
         }
 
-        // Kiểm tra mật khẩu
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             user.setFailed(user.getFailed() + 1);
             if (user.getFailed() >= 5) {
@@ -95,7 +95,6 @@ public class AuthService {
             throw new BadCredentialsException("Mật khẩu không hợp lệ. Lần thử: " + user.getFailed() + "/5");
         }
 
-        // Đặt lại số lần thất bại khi đăng nhập thành công
         user.setFailed(0);
         userRepository.save(user);
 

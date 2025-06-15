@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(
                                 "/api/auth/**",
+                                "/api/images/upload",
                                 "/api/cart/**",
                                 "/api/products/grid",
                                 "/api/products/**",
@@ -55,11 +56,10 @@ public class SecurityConfig {
                                 "/api/products/filter",
                                 "/api/products/bestsellers",
                                 "/api/orders",
-                                "/api/orders/**",
                                 "/api/orders/all",
-                                "/api/orders/status/",
                                 "/api/shipping/**",
                                 "/api/shipping/fee",
+                                "/api/review/**",
                                 "/api/payment/**",
                                 "/api/payment/create-vnpay",
                                 "/api/payment/vnpay-return",
@@ -70,9 +70,6 @@ public class SecurityConfig {
                                 "/api/user/forgot-password",
                                 "/api/user/reset-password",
                                 "/api/user/update",
-                                "/api/admin/list",
-                                "/api/admin/users",
-                                "/api/admin/products",
                                 "/api/vouchers/**",
                                 "/api/vouchers",
                                 "/api/categories",
@@ -81,7 +78,8 @@ public class SecurityConfig {
                                 "/api/e-vouchers",
                                 "/api/wishlist/**"
                         ).permitAll()
-//                        .requestMatchers("/api/cart/**").authenticated()
+                        // Chỉ admin mới truy cập được các endpoint admin
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
