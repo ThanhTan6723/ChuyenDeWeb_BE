@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,6 +153,37 @@ public class OrderController {
             return ResponseEntity.ok(createResponse(true, "Lấy thông tin đơn hàng thành công", data));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(createResponse(false, e.getMessage()));
+        }
+    }
+
+    @GetMapping("/total-sales")
+    public ResponseEntity<?> getTotalSales() {
+        try {
+            BigDecimal totalSales = orderService.getTotalSales();
+            Map<String, Object> data = new HashMap<>();
+            data.put("totalSales", totalSales);
+            data.put("growthPercentage", 72.8); // Giá trị giả lập
+            return ResponseEntity.ok(createResponse(true, "Lấy tổng doanh số thành công", data));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(createResponse(false, "Lỗi khi lấy tổng doanh số: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/sales-by-category")
+    public ResponseEntity<?> getSalesByCategory() {
+        try {
+            Map<String, BigDecimal> salesByCategory = orderService.getSalesByCategory();
+            List<Map<String, Object>> data = salesByCategory.entrySet().stream()
+                    .map(entry -> {
+                        Map<String, Object> item = new HashMap<>();
+                        item.put("category", entry.getKey());
+                        item.put("sales", entry.getValue());
+                        return item;
+                    })
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(createResponse(true, "Lấy doanh số theo danh mục thành công", data));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(createResponse(false, "Lỗi khi lấy doanh số theo danh mục: " + e.getMessage()));
         }
     }
 

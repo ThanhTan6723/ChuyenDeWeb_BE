@@ -54,13 +54,11 @@ public class UserService {
     public UserDTO createUser(CreateUserDTO createUserDTO) {
         logger.info("Tạo người dùng mới: {}", createUserDTO.getUsername());
 
-        // Validate DTO
         var violations = validator.validate(createUserDTO);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
 
-        // Kiểm tra username và email đã tồn tại
         if (userRepository.findByUsername(createUserDTO.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Tên người dùng đã tồn tại");
         }
@@ -68,11 +66,9 @@ public class UserService {
             throw new IllegalArgumentException("Email đã tồn tại");
         }
 
-        // Tìm role
         Role role = roleRepository.findByRoleName(createUserDTO.getRoleName())
                 .orElseThrow(() -> new IllegalArgumentException("Vai trò không tồn tại: " + createUserDTO.getRoleName()));
 
-        // Tạo user entity
         User user = new User();
         user.setUsername(createUserDTO.getUsername());
         user.setEmail(createUserDTO.getEmail());
@@ -82,7 +78,6 @@ public class UserService {
         user.setFailed(0);
         user.setLocked(false);
 
-        // Lưu user
         User savedUser = userRepository.save(user);
         logger.info("Đã tạo người dùng thành công: {}", savedUser.getUsername());
 
@@ -90,7 +85,6 @@ public class UserService {
     }
 
     public UserDTO updateUser(Long userId, UpdateUserDTO updateUserDTO, String authenticatedUsername) throws IllegalAccessException {
-        // Xác thực dữ liệu đầu vào
         Set<ConstraintViolation<UpdateUserDTO>> violations = validator.validate(updateUserDTO);
         if (!violations.isEmpty()) {
             logger.warn("Lỗi xác thực cho UpdateUserDTO: {}", violations);
@@ -100,27 +94,23 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
 
-        // Đảm bảo người dùng chỉ có thể cập nhật hồ sơ của chính họ
         if (!user.getUsername().equals(authenticatedUsername)) {
             logger.warn("Người dùng {} cố gắng cập nhật hồ sơ của {}", authenticatedUsername, user.getUsername());
             throw new IllegalAccessException("Không có quyền cập nhật thông tin người dùng khác");
         }
 
-        // Kiểm tra trùng username
         if (!user.getUsername().equals(updateUserDTO.getUsername()) &&
                 userRepository.findByUsername(updateUserDTO.getUsername()).isPresent()) {
             logger.warn("Username {} đã tồn tại", updateUserDTO.getUsername());
             throw new IllegalArgumentException("Username đã tồn tại");
         }
 
-        // Kiểm tra trùng email
         if (!user.getEmail().equals(updateUserDTO.getEmail()) &&
                 userRepository.findByEmail(updateUserDTO.getEmail()).isPresent()) {
             logger.warn("Email {} đã tồn tại", updateUserDTO.getEmail());
             throw new IllegalArgumentException("Email đã tồn tại");
         }
 
-        // Cập nhật thông tin người dùng
         user.setUsername(updateUserDTO.getUsername());
         user.setEmail(updateUserDTO.getEmail());
         user.setPhone(updateUserDTO.getPhone());
@@ -134,6 +124,14 @@ public class UserService {
         return userMapper.toDto(updatedUser);
     }
 
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Người dùng không tồn tại"));
+
+        userRepository.delete(user);
+        logger.info("Đã xóa người dùng với ID: {}", userId);
+    }
+
     public void createPasswordResetToken(String email, String frontendUrl) throws Exception {
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty()) {
@@ -141,18 +139,15 @@ public class UserService {
         }
 
         User user = userOpt.get();
-
-        // Tạo token mới
         String token = UUID.randomUUID().toString();
 
         ResetPassword passwordResetToken = new ResetPassword();
         passwordResetToken.setToken(token);
         passwordResetToken.setUser(user);
-        passwordResetToken.setExpiryDate(Instant.now().plus(15, ChronoUnit.MINUTES)); // Token hết hạn sau 15 phút
+        passwordResetToken.setExpiryDate(Instant.now().plus(15, ChronoUnit.MINUTES));
 
         tokenRepository.save(passwordResetToken);
 
-        // Gửi email
         String resetUrl = frontendUrl + "/reset-password?token=" + token;
         emailService.sendSimpleMessage(
                 user.getEmail(),
@@ -175,13 +170,8 @@ public class UserService {
         }
 
         User user = passwordResetToken.getUser();
-
-        // Mã hóa mật khẩu mới
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-
-        // Xóa token sau khi đổi mật khẩu thành công
         tokenRepository.delete(passwordResetToken);
     }
-
 }

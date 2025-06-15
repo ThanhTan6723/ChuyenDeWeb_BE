@@ -24,7 +24,6 @@ public class UserAdminController {
     private static final Logger logger = LoggerFactory.getLogger(UserAdminController.class);
 
     @GetMapping("/list")
-    // TODO: Reinstating @PreAuthorize("hasRole('ADMIN')") for production to secure this endpoint
     public ResponseEntity<?> getAllUsers() {
         try {
             logger.info("Đang lấy danh sách người dùng");
@@ -36,6 +35,7 @@ public class UserAdminController {
             return ResponseEntity.status(500).body(Map.of("message", "Lỗi hệ thống, vui lòng thử lại sau"));
         }
     }
+
     @PostMapping("/users")
     public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
         try {
@@ -51,9 +51,25 @@ public class UserAdminController {
             return ResponseEntity.badRequest().body(errors);
         } catch (IllegalArgumentException e) {
             logger.error("Lỗi: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("message dóng mắt", e.getMessage()));
         } catch (Exception e) {
             logger.error("Lỗi hệ thống: {}", e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("message", "Lỗi hệ thống, vui lòng thử lại sau"));
+        }
+    }
+
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        try {
+            logger.info("Đang xóa người dùng với ID: {}", userId);
+            userService.deleteUser(userId);
+            logger.info("Đã xóa thành công người dùng với ID: {}", userId);
+            return ResponseEntity.ok(Map.of("message", "Xóa người dùng thành công"));
+        } catch (IllegalArgumentException e) {
+            logger.error("Lỗi khi xóa người dùng: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            logger.error("Lỗi hệ thống khi xóa người dùng: {}", e.getMessage());
             return ResponseEntity.status(500).body(Map.of("message", "Lỗi hệ thống, vui lòng thử lại sau"));
         }
     }
