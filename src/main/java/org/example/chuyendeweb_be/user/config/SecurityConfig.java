@@ -45,9 +45,9 @@ public class SecurityConfig {
                         .accessDeniedHandler(restAccessDeniedHandler)
                 )
                 .authorizeHttpRequests(authz -> authz
-                        // Các endpoint public
                         .requestMatchers(
                                 "/api/auth/**",
+                                "/api/images/upload",
                                 "/api/cart/**",
                                 "/api/products/grid",
                                 "/api/products/**",
@@ -59,6 +59,7 @@ public class SecurityConfig {
                                 "/api/orders/all",
                                 "/api/shipping/**",
                                 "/api/shipping/fee",
+                                "/api/review/**",
                                 "/api/payment/**",
                                 "/api/payment/create-vnpay",
                                 "/api/payment/vnpay-return",

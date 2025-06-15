@@ -13,6 +13,7 @@ public class LoginRequestDTO {
     @Email(message = "Email không hợp lệ")
     private String email;
 
+    @Pattern(regexp = "^\\+?[0-9]{8,15}$", message = "Số điện thoại không hợp lệ")
     @Size(max = 15, message = "Số điện thoại không được vượt quá 15 ký tự")
     private String phone;
 

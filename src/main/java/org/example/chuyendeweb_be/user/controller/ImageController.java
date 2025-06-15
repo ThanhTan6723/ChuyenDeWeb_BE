@@ -1,10 +1,12 @@
 package org.example.chuyendeweb_be.user.controller;
+
 import lombok.RequiredArgsConstructor;
 import org.example.chuyendeweb_be.user.dto.ImageUploadResponse;
 import org.example.chuyendeweb_be.user.service.CloudinaryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -17,13 +19,16 @@ public class ImageController {
     @PostMapping("/upload")
     public ResponseEntity<ImageUploadResponse> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
-            String imageUrl = cloudinaryService.upLoadImage(file);
+            String uploadResult = cloudinaryService.upLoadImage(file);
+            JSONObject jsonResult = new JSONObject(uploadResult);
             return ResponseEntity.ok(new ImageUploadResponse(
-                    imageUrl,
+                    jsonResult.getString("imageUrl"),
+                    jsonResult.getString("publicId"),
                     "Image uploaded successfully"
             ));
         } catch (IOException e) {
             return ResponseEntity.badRequest().body(new ImageUploadResponse(
+                    null,
                     null,
                     "Failed to upload image: " + e.getMessage()
             ));

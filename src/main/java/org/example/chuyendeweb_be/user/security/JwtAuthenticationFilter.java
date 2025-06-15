@@ -45,7 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 || requestPath.startsWith("/api/shipping")
                 || requestPath.startsWith("/api/voucher")
                 || requestPath.startsWith("/api/categories")
-                || requestPath.startsWith("/api/images")) {
+                || requestPath.startsWith("/api/images")
+                || requestPath.startsWith("/api/review")
+                || requestPath.startsWith("/api/images/upload")){
             filterChain.doFilter(request, response);
             return;
         }

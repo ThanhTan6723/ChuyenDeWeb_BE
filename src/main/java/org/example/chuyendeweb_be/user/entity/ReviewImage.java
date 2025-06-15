@@ -8,14 +8,16 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "reviewimage")
-public class Reviewimage {
+public class ReviewImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Lob
-    @Column(name = "imgAssetId")
+    @Column(name = "img_asset_id")
     private String imgAssetId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
+    private Review review;
 }

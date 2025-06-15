@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewimageDTO implements Serializable {
+public class ReviewImageDTO implements Serializable {
     Long id;
     String imgAssetId;
 }
