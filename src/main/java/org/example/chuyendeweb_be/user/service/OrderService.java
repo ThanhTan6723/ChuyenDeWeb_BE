@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -169,5 +171,26 @@ public class OrderService {
         }
 
         return dto;
+    }
+
+    public BigDecimal getTotalSales() {
+        List<Order> deliveredOrders = orderRepository.findByOrderStatus(OrderStatus.DELIVERED);
+        return deliveredOrders.stream()
+                .map(Order::getTotalMoney)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public Map<String, BigDecimal> getSalesByCategory() {
+        List<Order> deliveredOrders = orderRepository.findByOrderStatus(OrderStatus.DELIVERED);
+        Map<String, BigDecimal> salesByCategory = new HashMap<>();
+        for (Order order : deliveredOrders) {
+            List<OrderDetail> details = orderDetailRepository.findByOrderId(order.getId());
+            for (OrderDetail detail : details) {
+                String category = detail.getVariant().getProduct().getCategory().getName();
+                BigDecimal price = detail.getPriceWithQuantity();
+                salesByCategory.merge(category, price, BigDecimal::add);
+            }
+        }
+        return salesByCategory;
     }
 }

@@ -140,7 +140,12 @@ public class ProductService {
     public List<ProductGridDTO> mapToDTO(List<Product> products) {
         return products.stream().map(this::mapProductToDTO).collect(Collectors.toList());
     }
-
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm với ID: " + productId));
+        productRepository.delete(product);
+        logger.info("Đã xóa sản phẩm với ID: {}", productId);
+    }
     private ProductGridDTO mapProductToDTO(Product product) {
         ProductGridDTO dto = new ProductGridDTO();
         dto.setId(product.getId());

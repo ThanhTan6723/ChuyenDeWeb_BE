@@ -91,7 +91,6 @@ public class ProductAdminController {
             logger.info("Adding new product: {}", name);
             logger.info("All params: {}", allParams);
 
-            // Tìm hoặc tạo brand
             Brand brand = brandRepository.findByName(brandName)
                     .orElseGet(() -> {
                         Brand newBrand = new Brand();
@@ -99,7 +98,6 @@ public class ProductAdminController {
                         return brandRepository.save(newBrand);
                     });
 
-            // Tìm hoặc tạo category
             Category category = categoryRepository.findByName(categoryName)
                     .orElseGet(() -> {
                         Category newCategory = new Category();
@@ -107,7 +105,6 @@ public class ProductAdminController {
                         return categoryRepository.save(newCategory);
                     });
 
-            // Tạo sản phẩm mới
             Product product = new Product();
             product.setName(name);
             product.setDescription(description);
@@ -115,7 +112,6 @@ public class ProductAdminController {
             product.setCategory(category);
             product.setProductVariantList(new ArrayList<>());
 
-            // Xử lý các biến thể
             Map<Integer, ProductVariant> variants = new HashMap<>();
             allParams.forEach((key, value) -> {
                 if (key.startsWith("variants[")) {
@@ -149,7 +145,6 @@ public class ProductAdminController {
                                 }
                                 break;
                         }
-                        // Thiết lập quan hệ với product
                         variant.setProduct(product);
                     } else {
                         logger.warn("Invalid key format: {}", key);
@@ -157,9 +152,6 @@ public class ProductAdminController {
                 }
             });
 
-            logger.info("Variants created: {}", variants);
-
-            // Thêm các biến thể vào product
             if (variants.isEmpty()) {
                 logger.warn("No variants provided for product: {}", name);
             } else {
@@ -169,39 +161,31 @@ public class ProductAdminController {
                 }
             }
 
-            // Lưu sản phẩm và biến thể trước
             Product savedProduct = productRepository.save(product);
             logger.info("Saved product and variants: {}", savedProduct);
 
-            // Xử lý hình ảnh sau khi biến thể đã được lưu
             if (images != null && !images.isEmpty() && !variants.isEmpty()) {
-                ProductVariant firstVariant = savedProduct.getProductVariantList().get(0); // Lấy biến thể đã lưu
+                ProductVariant firstVariant = savedProduct.getProductVariantList().get(0);
                 List<ProductImage> productImages = new ArrayList<>();
                 for (int i = 0; i < images.size(); i++) {
                     MultipartFile file = images.get(i);
-                    // Upload ảnh lên Cloudinary
                     String imageUrl = cloudinaryService.upLoadImage(file);
-                    // Trích xuất public_id từ URL
                     String publicId = extractPublicIdFromUrl(imageUrl);
                     logger.info("Uploaded image to Cloudinary, public_id: {}", publicId);
 
-                    // Lưu vào bảng images
                     Image image = new Image();
                     image.setPublicId(publicId);
                     Image savedImage = imageRepository.save(image);
 
-                    // Tạo ProductImage
                     ProductImage productImage = new ProductImage();
                     productImage.setProductVariant(firstVariant);
                     productImage.setImage(savedImage);
                     productImage.setMainImage(i == 0);
                     productImages.add(productImage);
                 }
-                // Lưu danh sách ProductImage
                 productImageRepository.saveAll(productImages);
                 firstVariant.getProductImageList().addAll(productImages);
-                // Cập nhật ProductVariant
-                productRepository.save(savedProduct); // Lưu lại để cập nhật productImageList
+                productRepository.save(savedProduct);
             }
 
             return ResponseEntity.ok(Map.of("message", "Product added successfully"));
@@ -211,12 +195,25 @@ public class ProductAdminController {
         }
     }
 
-    // Hàm trích xuất public_id từ URL của Cloudinary
+    @DeleteMapping("/products/{productId}")
+    public ResponseEntity<Map<String, Object>> deleteProduct(@PathVariable Long productId) {
+        try {
+            logger.info("Đang xóa sản phẩm với ID: {}", productId);
+            productService.deleteProduct(productId);
+            logger.info("Đã xóa thành công sản phẩm với ID: {}", productId);
+            return ResponseEntity.ok(Map.of("message", "Xóa sản phẩm thành công"));
+        } catch (IllegalArgumentException e) {
+            logger.error("Lỗi khi xóa sản phẩm: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            logger.error("Lỗi hệ thống khi xóa sản phẩm: {}", e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("error", "Lỗi hệ thống, vui lòng thử lại sau"));
+        }
+    }
+
     private String extractPublicIdFromUrl(String imageUrl) {
-        // URL mẫu: https://res.cloudinary.com/<cloud_name>/image/upload/v<timestamp>/<public_id>.<extension>
         String[] parts = imageUrl.split("/");
         String lastPart = parts[parts.length - 1];
-        // Loại bỏ extension (ví dụ: .jpg, .png)
         return lastPart.substring(0, lastPart.lastIndexOf("."));
     }
 }
