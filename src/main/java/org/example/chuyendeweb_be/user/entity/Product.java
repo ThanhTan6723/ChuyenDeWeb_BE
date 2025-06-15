@@ -34,6 +34,6 @@ public class Product {
     @Column(name = "view_count")
     private Integer viewCount;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductVariant> productVariantList;
 }
