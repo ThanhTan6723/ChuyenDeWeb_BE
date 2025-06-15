@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
+import org.json.JSONObject;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,11 @@ public class CloudinaryService implements CloudaryRepository {
         log.info("fileUpload is: {}", fileUpload);
         cloudinary.uploader().upload(fileUpload, ObjectUtils.asMap("public_id", publicValue));
         cleanDisk(fileUpload);
-        return cloudinary.url().generate(StringUtils.join(publicValue, ".", extension));
+        String imageUrl = cloudinary.url().generate(StringUtils.join(publicValue, ".", extension));
+        JSONObject result = new JSONObject();
+        result.put("imageUrl", imageUrl);
+        result.put("publicId", publicValue);
+        return result.toString();
     }
 
     public void deleteImage(String publicId) throws IOException {
@@ -67,5 +72,4 @@ public class CloudinaryService implements CloudaryRepository {
     public String[] getFileName(String originalName) {
         return originalName.split("\\.");
     }
-
 }

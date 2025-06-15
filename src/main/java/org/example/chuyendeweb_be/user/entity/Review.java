@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -39,14 +41,13 @@ public class Review {
     @Column(name = "date_reply")
     private Instant dateReply;
 
-    @Column(name = "image")
-    private String image;
-
     @Lob
     @Column(name = "response")
     private String response;
 
-    @Column(name = "isAccept")
+    @Column(name = "is_accept")
     private Boolean isAccept;
 
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewImage> images = new ArrayList<>();
 }
