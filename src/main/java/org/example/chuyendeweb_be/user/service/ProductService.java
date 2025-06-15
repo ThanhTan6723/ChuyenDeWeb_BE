@@ -97,7 +97,7 @@ public class ProductService {
         return mapToDetailDTO(product);
     }
 
-    private ProductDetailDTO mapToDetailDTO(Product product) {
+    public ProductDetailDTO mapToDetailDTO(Product product) {
         ProductDetailDTO dto = new ProductDetailDTO();
         dto.setId(product.getId());
         dto.setName(product.getName() != null ? product.getName() : "Không xác định");

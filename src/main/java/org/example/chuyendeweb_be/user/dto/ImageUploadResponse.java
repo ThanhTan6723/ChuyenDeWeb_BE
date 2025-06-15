@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ImageUploadResponse {
     private String imageUrl;
+    private String publicId;
     private String message;
 }
