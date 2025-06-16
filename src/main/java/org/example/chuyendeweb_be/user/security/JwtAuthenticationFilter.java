@@ -129,7 +129,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return ResponseCookie.from("accessToken", token)
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .path("/")
                 .maxAge(15 * 60)
                 .build();
@@ -139,7 +139,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return ResponseCookie.from("refreshToken", token)
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .path("/")
                 .maxAge(7 * 24 * 60 * 60)
                 .build();

@@ -7,9 +7,7 @@
 //import lombok.Data;
 //import lombok.RequiredArgsConstructor;
 //import org.example.chuyendeweb_be.user.dto.AuthResponseDTO;
-//import org.example.chuyendeweb_be.user.entity.Role;
 //import org.example.chuyendeweb_be.user.entity.User;
-//import org.example.chuyendeweb_be.user.repository.RoleRepository;
 //import org.example.chuyendeweb_be.user.repository.UserRepository;
 //import org.example.chuyendeweb_be.user.security.JwtService;
 //import org.springframework.beans.factory.annotation.Value;
@@ -32,19 +30,16 @@
 //
 //    private final JwtService jwtService;
 //    private final UserRepository userRepository;
-//    private final RoleRepository roleRepository;
 //
 //    @Value("${spring.security.oauth2.client.registration.google.client-id}")
 //    private String googleClientId;
 //
 //    @PostMapping("/google")
 //    public ResponseEntity<?> googleLogin(@RequestBody GoogleLoginRequest request) {
-//        logger.info("⚡ Nhận yêu cầu đăng nhập bằng Google");
+//        logger.info("⚡ Received Google login request");
 //
 //        try {
-//            logger.info("📥 ID Token nhận được: " + request.getIdToken());
-//
-//            // Xác minh id_token
+//            // Verify id_token
 //            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
 //                    new NetHttpTransport(), GsonFactory.getDefaultInstance())
 //                    .setAudience(Collections.singletonList(googleClientId))
@@ -52,7 +47,7 @@
 //
 //            GoogleIdToken idToken = verifier.verify(request.getIdToken());
 //            if (idToken == null) {
-//                logger.warning("❌ ID Token không hợp lệ hoặc hết hạn");
+//                logger.warning("❌ Invalid or expired ID Token");
 //                return ResponseEntity.badRequest().body(Map.of("error", "Invalid Google ID token"));
 //            }
 //
@@ -60,38 +55,12 @@
 //            String email = payload.getEmail();
 //            String name = (String) payload.get("name");
 //
-//            logger.info("✅ Token hợp lệ - Email: " + email + ", Name: " + name);
+//            logger.info("✅ Valid token - Email: " + email + ", Name: " + name);
 //
-//            // Tìm hoặc tạo mới user
-//            Optional<User> optionalUser = userRepository.findByEmailWithRole(email);
-//            User user;
+//            // Find or create user
+//            User user = findOrCreateUser(email, name);
 //
-//            if (optionalUser.isPresent()) {
-//                user = optionalUser.get();
-//                logger.info("🔁 User đã tồn tại: " + user.getUsername());
-//            } else {
-//                logger.info("🆕 User chưa tồn tại, tiến hành tạo mới");
-//
-//                user = new User();
-//                user.setUsername(name != null ? name : email.split("@")[0]);
-//                user.setEmail(email);
-//                user.setPassword("");
-//                user.setLocked(false);
-//                user.setFailed(0);
-//                user.setTokenVersion(jwtService.generateTokenVersion());
-//
-//                Role defaultRole = roleRepository.findByRoleName("ROLE_CLIENT")
-//                        .orElseThrow(() -> {
-//                            logger.severe("🚨 ROLE_CLIENT không tồn tại trong cơ sở dữ liệu");
-//                            return new RuntimeException("ROLE_CLIENT not found");
-//                        });
-//
-//                user.setRole(defaultRole);
-//                userRepository.save(user);
-//                logger.info("✅ Tạo user mới thành công: " + user.getUsername());
-//            }
-//
-//            // Tạo JWT token
+//            // Create JWT token
 //            UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
 //                    .username(user.getEmail())
 //                    .password("")
@@ -100,34 +69,14 @@
 //
 //            AuthResponseDTO authResponse = jwtService.generateOAuth2Tokens(userDetails, user.getTokenVersion());
 //
-//            logger.info("🔐 Tạo JWT thành công");
-//            logger.info("📦 AccessToken (truncated): " + authResponse.getAccessToken().substring(0, 20) + "...");
-//            logger.info("📦 RefreshToken (truncated): " + authResponse.getRefreshToken().substring(0, 20) + "...");
+//            // Create cookies
+//            HttpHeaders headers = createAuthCookies(authResponse);
 //
-//            // Tạo cookie
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("accessToken", authResponse.getAccessToken())
-//                    .httpOnly(true)
-//                    .secure(true)
-//                    .sameSite("None")
-//                    .path("/")
-//                    .maxAge(15 * 60)
-//                    .build().toString());
-//
-//            headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("refreshToken", authResponse.getRefreshToken())
-//                    .httpOnly(true)
-//                    .secure(true)
-//                    .sameSite("None")
-//                    .path("/api/auth/refresh-token")
-//                    .maxAge(30 * 60)
-//                    .build().toString());
-//
-//            logger.info("🍪 Cookie đã được set thành công");
-//
+//            logger.info("✅ Successful Google login for: " + user.getUsername());
 //            return ResponseEntity.ok()
 //                    .headers(headers)
 //                    .body(Map.of(
-//                            "message", "Đăng nhập Google thành công",
+//                            "message", "Google login successful",
 //                            "accessToken", authResponse.getAccessToken(),
 //                            "refreshToken", authResponse.getRefreshToken(),
 //                            "user", Map.of(
@@ -139,10 +88,51 @@
 //                    ));
 //
 //        } catch (Exception e) {
-//            logger.severe("🔥 Lỗi xử lý đăng nhập Google: " + e.getMessage());
-//            e.printStackTrace();
-//            return ResponseEntity.badRequest().body(Map.of("error", "Lỗi đăng nhập Google: " + e.getMessage()));
+//            logger.severe("🔥 Google login error: " + e.getMessage());
+//            return ResponseEntity.badRequest().body(Map.of("error", "Google login error: " + e.getMessage()));
 //        }
+//    }
+//
+//    private User findOrCreateUser(String email, String name) {
+//        Optional<User> optionalUser = userRepository.findByEmailWithRole(email);
+//
+//        if (optionalUser.isPresent()) {
+//            logger.info("🔁 Existing user: " + email);
+//            return optionalUser.get();
+//        }
+//
+//        logger.info("🆕 Creating new user: " + email);
+//        User user = new User();
+//        user.setUsername(name != null ? name : email.split("@")[0]);
+//        user.setEmail(email);
+//        user.setPassword("");
+//        user.setLocked(false);
+//        user.setFailed(0);
+//        user.setTokenVersion(jwtService.generateTokenVersion());
+//
+//        user.setRole(jwtService.getDefaultRole());
+//        return userRepository.save(user);
+//    }
+//
+//    private HttpHeaders createAuthCookies(AuthResponseDTO authResponse) {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("accessToken", authResponse.getAccessToken())
+//                .httpOnly(true)
+//                .secure(true)
+//                .sameSite("None")
+//                .path("/")
+//                .maxAge(15 * 60)
+//                .build().toString());
+//
+//        headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("refreshToken", authResponse.getRefreshToken())
+//                .httpOnly(true)
+//                .secure(true)
+//                .sameSite("None")
+//                .path("/api/auth/refresh-token")
+//                .maxAge(7 * 24 * 60 * 60)
+//                .build().toString());
+//
+//        return headers;
 //    }
 //
 //    @Data

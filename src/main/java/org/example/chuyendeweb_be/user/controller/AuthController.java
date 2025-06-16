@@ -186,14 +186,14 @@ public class AuthController {
                 .secure(true)
                 .sameSite("None")
                 .path("/")
-                .maxAge(15*60)
+                .maxAge(15 * 60)
                 .build().toString());
         headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("refreshToken", authResponse.getRefreshToken())
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("None")
                 .path("/")
-                .maxAge(30*60)
+                .maxAge(30 * 60)
                 .build().toString());
         return headers;
     }
