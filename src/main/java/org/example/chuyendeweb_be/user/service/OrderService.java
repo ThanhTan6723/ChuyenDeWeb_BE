@@ -28,6 +28,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final EVoucherRepository eVoucherRepository;
 
     @Transactional
     public Order createOrder(Long userId, OrderDTO orderDTO) {
@@ -108,6 +109,17 @@ public class OrderService {
 
         if (orderDetails.isEmpty()) {
             throw new IllegalArgumentException("Không có sản phẩm hợp lệ nào trong đơn hàng");
+        }
+
+        // Handle voucher usage if applied
+        if (orderDTO.getDiscountValue().compareTo(BigDecimal.ZERO) > 0 && orderDTO.getVoucherId() != null) {
+            EVoucher eVoucher = eVoucherRepository.findByUserAndVoucher_Id(user, orderDTO.getVoucherId())
+                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy voucher đã lưu cho người dùng"));
+            if (eVoucher.getUsage_limit() == 0) {
+                throw new IllegalArgumentException("Voucher đã được sử dụng");
+            }
+            eVoucher.setUsage_limit(0);
+            eVoucherRepository.save(eVoucher);
         }
 
         // Add shipping cost and apply discount

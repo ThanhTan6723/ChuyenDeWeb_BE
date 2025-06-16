@@ -78,6 +78,11 @@ public class VoucherService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("Người dùng không tồn tại"));
         return eVoucherRepository.findByUser(user).stream()
+                .filter(eVoucher -> eVoucher.getUsage_limit() == 1 &&
+                        eVoucher.getVoucher().getIsActive() &&
+                        !eVoucher.getVoucher().getEndDate().isBefore(LocalDate.now()) &&
+                        !eVoucher.getVoucher().getStartDate().isAfter(LocalDate.now()) &&
+                        eVoucher.getVoucher().getQuantity() > 0)
                 .map(eVoucher -> mapVoucherToDTO(eVoucher.getVoucher()))
                 .collect(Collectors.toList());
     }

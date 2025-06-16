@@ -41,4 +41,5 @@ public class OrderDTO {
     @NotNull(message = "Thông tin thanh toán không được để trống")
     @Valid
     private Long paymentId;
+    private Long voucherId;
 }

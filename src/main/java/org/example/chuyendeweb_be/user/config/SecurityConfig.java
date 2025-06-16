@@ -3,7 +3,7 @@ package org.example.chuyendeweb_be.user.config;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Connector;
 import org.example.chuyendeweb_be.user.security.JwtAuthenticationFilter;
-import org.example.chuyendeweb_be.user.security.OAuth2LoginSuccessHandler;
+//import org.example.chuyendeweb_be.user.security.OAuth2LoginSuccessHandler;
 import org.example.chuyendeweb_be.user.security.RestAccessDeniedHandler;
 import org.example.chuyendeweb_be.user.security.RestAuthenticationEntryPoint;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -28,7 +28,7 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+//    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final RestAccessDeniedHandler restAccessDeniedHandler;
 
@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(
                                 "/api/auth/**",
+                                "/api/auth/google",
                                 "/api/images/upload",
                                 "/api/cart/**",
                                 "/api/products/grid",
@@ -78,11 +79,10 @@ public class SecurityConfig {
                                 "/api/e-vouchers",
                                 "/api/wishlist/**"
                         ).permitAll()
-                        // Chỉ admin mới truy cập được các endpoint admin
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
+//                .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

@@ -18,4 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u JOIN FETCH u.role WHERE u.username = :username OR u.email = :username")
     Optional<User> findByUsernameOrEmailWithRole(String username);
+
+    // Phương thức mới để tải Role cùng User
+    @Query("SELECT u FROM User u JOIN FETCH u.role WHERE u.email = :email")
+    Optional<User> findByEmailWithRole(String email);
 }
